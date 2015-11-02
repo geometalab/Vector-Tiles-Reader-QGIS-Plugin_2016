@@ -1,0 +1,2 @@
+# Vector-Tiles-Reader-QGIS-Plugin
+QGIS Python plugin which reads vector tiles. See also http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
