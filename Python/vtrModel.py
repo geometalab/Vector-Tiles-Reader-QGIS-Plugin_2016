@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" THIS COMMENT MUST NOT REMAIN INTACT
+""" THIS COMMENT MUST REMAIN INTACT
 
 The MIT License (MIT)
 
