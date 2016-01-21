@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" THIS COMMENT MUST REMAIN INTACT
+""" THIS COMMENT MUST NOT REMAIN INTACT
 
 The MIT License (MIT)
 
@@ -33,7 +33,7 @@ import os
 from PyQt4 import QtGui, uic
 
 FORM_CLASS_NEW, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), '/VectorTilesReader/vtr.ui'))
+    os.path.dirname(__file__), '/vtr.ui'))
 
 class Dialog(QtGui.QDialog, FORM_CLASS_NEW):
     def __init__(self, parent=None):        

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" THIS COMMENT MUST REMAIN INTACT
+""" THIS COMMENT MUST NOT REMAIN INTACT
 
 The MIT License (MIT)
 
@@ -28,3 +28,10 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
+class Model:
+    pydevd.settrace()
+    _iface = None
+    _onProjectLoad = None
+    
+    
+    def __init__(self, iface):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" THIS COMMENT MUST REMAIN INTACT
+""" THIS COMMENT MUST NOT REMAIN INTACT
 
 The MIT License (MIT)
 
@@ -28,6 +28,6 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-def VectorTilesReader(iface):
-    from vtrPlugin import Plugin
-    return Plugin(iface)
+def classFactory(iface):
+  from vtrPlugin import Plugin
+  return Plugin(iface)

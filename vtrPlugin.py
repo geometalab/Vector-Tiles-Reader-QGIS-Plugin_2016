@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" THIS COMMENT MUST REMAIN INTACT
+""" THIS COMMENT MUST NOT REMAIN INTACT
 
 The MIT License (MIT)
 
@@ -28,47 +28,48 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-import PyQt4
-import qgis
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from qgis.core import *
 
-# import controller
-# import model
-
-#import os.path
-
-# The following three lines are used for remote debugging.
-# The File Path should point to your pysrc directory in the LiClipse installation folder.
-#import sys;
-#sys.path.append(r"C:\Program Files\Brainwy\LiClipse 2.4.0\plugins\org.python.pydev_4.4.0.201510052047\pysrc")
-#import pydevd
+# initialize Qt resources from file resources.py
+import resources
 
 class Plugin:
-    pydevd.settrace()
-    _iface = None
-    _onProjectLoad = None
-    
-    
-    def __init__(self, iface):
-        self._iface = iface        
-        self._pluginDir = os.path.dirname(__file__)
-        self._qSettings = QSettings()
 
-# Translator
-        #locale = QSettings().value('locale/userLocale')[0:2]
-        #locale_path = os.path.join(self._pluginDir,'i18n','arcgiscon_{}.qm'.format(locale))
-        #if os.path.exists(locale_path):
-        #    self.translator = QTranslator()
-        #    self.translator.load(locale_path)
-        #   if qVersion() > '4.3.3':
-        #       QCoreApplication.installTranslator(self.translator)
-        
-        NotificationHandler.configureIface(iface)
-        self._iface.projectRead.connect(self._onProjectLoad)        
-        #self._updateService = EsriUpdateService.createService(iface)
-        #self._updateService.finished.connect(self._updateServiceFinished)      
-        
-        self._newController = ArcGisConNewController(iface)
-        self._refreshController = ArcGisConRefreshController(iface)
-    
-    def initGUI(self):
+  def __init__(self, iface):
+    # save reference to the QGIS interface
+    self.iface = iface
+
+  def initGui(self):
+    # create action that will start plugin configuration
+    self.action = QAction(QIcon(":/plugins/VectorTilesReader/icon.png"), "VectorTilesReader", self.iface.mainWindow())
+    self.action.setObjectName("testAction")
+    self.action.setWhatsThis("Configuration for test plugin")
+    self.action.setStatusTip("This is status tip")
+    QObject.connect(self.action, SIGNAL("triggered()"), self.run)
+
+    # add toolbar button and menu item
+    self.iface.addToolBarIcon(self.action)
+    self.iface.addPluginToMenu("&Test plugins", self.action)
+
+    # connect to signal renderComplete which is emitted when canvas
+    # rendering is done
+    QObject.connect(self.iface.mapCanvas(), SIGNAL("renderComplete(QPainter *)"), self.renderTest)
+
+  def unload(self):
+    # remove the plugin menu item and icon
+    self.iface.removePluginMenu("&Test plugins", self.action)
+    self.iface.removeToolBarIcon(self.action)
+
+    # disconnect form signal of the canvas
+    QObject.disconnect(self.iface.mapCanvas(), SIGNAL("renderComplete(QPainter *)"), self.renderTest)
+
+  def run(self):
+    # create and show a configuration dialog or something similar
+    print "TestPlugin: run called!"
+
+  def renderTest(self, painter):
+    # use painter for drawing to map canvas
+    print "TestPlugin: renderTest called!"
         
