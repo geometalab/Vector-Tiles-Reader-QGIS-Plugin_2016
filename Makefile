@@ -22,26 +22,6 @@
 # Edit the following to match your sources lists
 #################################################
 
-
-#Add iso code for any locales you want to support here (space separated)
-# default is no locales
-LOCALES = arcgiscon_en arcgiscon_de arcgiscon_fr
-
-# If locales are enabled, set the name of the lrelease binary on your system. If
-# you have trouble compiling the translations, you may have to specify the full path to
-# lrelease
-LRELEASE = lrelease
-#LRELEASE = lrelease-qt4
-
-# translation
-#SOURCES = \
-#    __init__.py \
-#    arcgiscon_plugin.py \
-#    arcgiscon_controller.py \
-#    arcgiscon_model.py \
-#    arcgiscon_service.py \
-#    arcgiscon_ui.py
-    
 PLUGINNAME = VectorTilesReader
 
 PY_FILES = \
@@ -62,7 +42,7 @@ UI_FILES = \
 
 EXTRAS = metadata.txt
 
-#COMPILED_RESOURCE_FILES = resources_rc.py
+COMPILED_RESOURCE_FILES = resources_rc.py
 
 PEP8EXCLUDE=pydev,resources_rc.py,conf.py,third_party,ui
 
