@@ -3,9 +3,9 @@
 #
 # Editable CSV Vector Layer
 #							 -------------------
-#		begin				: 2015-04-29
+#		begin				: 2016-01-01
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2015 by geometalab
+#		copyright			: (C) 2016 by geometalab
 #		email				: geometalab@gmail.com
 # *************************************************************************************/
 #
