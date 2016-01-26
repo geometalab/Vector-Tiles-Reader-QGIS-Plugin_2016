@@ -28,15 +28,12 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-import os
+from PyQt4 import QtCore, QtGui 
+from ui_vtr import UserInterface
 
-from PyQt4 import QtGui, uic
-
-FORM_CLASS_NEW, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), '/vtr.ui'))
-
-class Dialog(QtGui.QDialog, FORM_CLASS_NEW):
-    def __init__(self, parent=None):        
-        super(Dialog, self).__init__(parent)        
-        self.setupUi(self)
-          
+class Dialog(QtGui.QDialog):
+    def __init__(self): 
+        QtGui.QDialog.__init__(self) 
+        # Set up the user interface from Designer. 
+        self.ui = UserInterface()
+        self.ui.setupUi(self)

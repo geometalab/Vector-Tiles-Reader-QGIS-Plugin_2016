@@ -28,6 +28,23 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
+def name(): 
+    return "vtr"
+
+def description():
+    return "reades vector tiles"
+
+def version(): 
+    return "Version 0.1" 
+
+def qgisMinimumVersion():
+    return "2.12"
+
+def classFactory(iface): 
+    # load VectorTilesReader class from file VectorTilesReader
+    from vtr_plugin import Plugin 
+    return Plugin(iface)
+
 def classFactory(iface):
-  from vtrPlugin import Plugin
-  return Plugin(iface)
+    from vtr_plugin import Plugin
+    return Plugin(iface)
