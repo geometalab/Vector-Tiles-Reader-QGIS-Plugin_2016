@@ -33,25 +33,29 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 
+import vtr_encoder
+import vtr_decoder
+
 # Initialize Qt resources from file resources.py
 import resources
 
 # Import the code for the dialog
 from vtr_dialog import Dialog
 
-import sys
-sys.path.append(r'C:\Program Files (x86)\JetBrains\PyCharm 5.0.4\helpers\pydev')
-import pydevd
-
+# import sys
+# sys.path.append(r'C:\Program Files (x86)\JetBrains\PyCharm 5.0.4\helpers\pydev')
+# import pydevd
 
 class Plugin:
     _newDialog = None
     _connection = None
+    _extents = 4096
     action = None
-#     pydevd.settrace()
+    # pydevd.settrace()
 
     def __init__(self, iface):
         self.iface = iface
+        self._extents = 4096
 
     def initGui(self):
         # Create action that will start plugin configuration
@@ -79,3 +83,18 @@ class Plugin:
             # do something useful (delete the line containing pass and
             # substitute with your code
             pass 
+
+    def decode(self, tile):
+        vector_tile = vtr_decoder.TileData()
+        message = vector_tile.getMessage(tile)
+        return message
+
+    def encode(self, layers):
+        vector_tile = vtr_encoder.VectorTile(self._extents)
+        if (isinstance(layers, list)):
+            for layer in layers:
+                vector_tile.addFeatures(layer['features'], layer['name'])
+        else:
+            vector_tile.addFeatures(layers['features'], layers['name'])
+
+        return vector_tile.tile.SerializeToString()

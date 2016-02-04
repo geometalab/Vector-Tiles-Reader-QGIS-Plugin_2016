@@ -21,8 +21,6 @@ POLYGON = 3
 
 
 class TileData:
-    """
-    """
     def __init__(self):
         self.tile = vector_tile.tile()
 
