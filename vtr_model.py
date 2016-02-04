@@ -28,23 +28,10 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-
-def name():
-    return "vtr"
+# Handling backend operations.
 
 
-def description():
-    return "reades vector tiles"
+class Model:
 
-
-def version():
-    return "Version 0.1" 
-
-
-def qgisMinimumVersion():
-    return "2.12"
-
-
-def classFactory(iface):
-    from vtr_plugin import Plugin
-    return Plugin(iface)
+    def __init__(self, iface):
+        self.iface = iface

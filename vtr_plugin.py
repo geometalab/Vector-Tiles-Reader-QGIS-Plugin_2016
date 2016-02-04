@@ -39,18 +39,23 @@ import resources
 # Import the code for the dialog
 from vtr_dialog import Dialog
 
+import sys
+sys.path.append(r'C:\Program Files (x86)\JetBrains\PyCharm 5.0.4\helpers\pydev')
+import pydevd
+
+
 class Plugin:
-    _iface = None
     _newDialog = None
     _connection = None
-  
+    action = None
+#     pydevd.settrace()
+
     def __init__(self, iface):
         self.iface = iface
-    
+
     def initGui(self):
         # Create action that will start plugin configuration
-        self.action = QAction(QIcon(":/plugins/VectorTilesReader/icon.png"), \
-            "Vector Tile Reader", self.iface.mainWindow())
+        self.action = QAction(QIcon(":/plugins/VectorTilesReader/icon.png"), "Vector Tile Reader", self.iface.mainWindow())
         # connect the action to the run method
         QObject.connect(self.action, SIGNAL("activated()"), self.run) 
 

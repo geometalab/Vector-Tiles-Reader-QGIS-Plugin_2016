@@ -31,6 +31,7 @@ SOFTWARE.
 from PyQt4 import QtCore, QtGui 
 from ui_vtr import UserInterface
 
+
 class Dialog(QtGui.QDialog):
     def __init__(self): 
         QtGui.QDialog.__init__(self) 
