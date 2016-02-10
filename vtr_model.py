@@ -33,5 +33,39 @@ SOFTWARE.
 
 class Model:
 
+    from vtr_dialog import Dialog
+
+    from vtr_encoder import VectorTile
+    from vtr_decoder import TileData
+
+    _extents = None
+    vector_tile = None
+
     def __init__(self, iface):
         self.iface = iface
+        _extents = 4096
+
+    @property
+    def vector_data(self):
+        return self.vector_tile
+
+    @vector_data.setter
+    def vector_data(self, vector):
+        self.vector_tile = vector
+        print self.decode(vector)
+
+    def decode(self, tile):
+        vector_tile = self.TileData.TileData()
+        message = vector_tile.getMessage(tile)
+        return message
+
+    def encode(self, layers):
+        vector_tile = self.VectorTile(self._extents)
+        if (isinstance(layers, list)):
+            for layer in layers:
+                vector_tile.addFeatures(layer['features'], layer['name'])
+        else:
+            vector_tile.addFeatures(layers['features'], layers['name'])
+
+        return vector_tile.tile.SerializeToString()
+

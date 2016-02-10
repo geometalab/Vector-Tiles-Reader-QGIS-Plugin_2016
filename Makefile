@@ -41,6 +41,7 @@ PY_FILES = \
     __init__.py \
     vtr_plugin.py \
     vtr_dialog.py \
+    vtr_model.py \
 
 UI_FILES = \
     ui_vtr.py \
