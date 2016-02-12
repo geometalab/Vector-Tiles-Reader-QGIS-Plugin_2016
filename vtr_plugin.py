@@ -38,6 +38,7 @@ from vtr_dialog import Dialog
 # Initialize Qt resources from file resources.py
 import resources
 
+
 class Plugin:
     _newDialog = None
     _connection = None
@@ -47,10 +48,12 @@ class Plugin:
     def __init__(self, iface):
         self.iface = iface
         self._extents = 4096
+        self.initialize_gui()
 
-    def initGui(self):
+    def initialize_gui(self):
         # Create action that will start plugin configuration
-        self.action = QAction(QIcon(":/plugins/VectorTilesReader/icon.png"), "Vector Tile Reader", self.iface.mainWindow())
+        self.action = QAction(QIcon(":/plugins/Vector-Tiles-Reader-QGIS-Plugin/icon.png"), "Vector Tile Reader", self.iface.mainWindow())
+
         # connect the action to the run method
         QObject.connect(self.action, SIGNAL("activated()"), self.run) 
 
@@ -63,12 +66,12 @@ class Plugin:
         self.iface.removePluginMenu("&Vector Tile Reader",self.action)
         self.iface.removeToolBarIcon(self.action)
 
-    def run(self): 
-        # create and show the dialog 
-        dlg = Dialog() 
+    def run(self):
+        # create and show the dialog
+        self.dialog = Dialog()
         # show the dialog
-        dlg.show()
-        result = dlg.exec_() 
+        self.dialog.show()
+        result = self.dialog.exec_()
         # See if OK was pressed
         if result == 1: 
             # do something useful (delete the line containing pass and

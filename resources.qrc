@@ -1,5 +1,5 @@
 <RCC> 
-  <qresource prefix="/plugins/VectorTilesReader" > 
+  <qresource prefix="/plugins/vectortilereader" >
     <file>icon.png</file> 
   </qresource> 
 </RCC>

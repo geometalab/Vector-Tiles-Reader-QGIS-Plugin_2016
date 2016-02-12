@@ -33,7 +33,11 @@ from PyQt4 import QtCore, QtGui
 from ui_vtr import UserInterface
 from vtr_model import Model
 
-class Dialog(QtGui.QDialog):
+
+class Dialog:
+
+    model = None
+    ui = None
 
     def __init__(self): 
         QtGui.QDialog.__init__(self) 
@@ -43,11 +47,13 @@ class Dialog(QtGui.QDialog):
 
     @property
     def vector_data(self):
+        self.model = Model()
         return self.model.vector_data()
 
     @vector_data.setter
     def vector_data(self, vector):
         # TODO bool vector
-        self.Model.vector_data(vector)
+        self.model = Model()
+        self.model.vector_data(vector)
 
 

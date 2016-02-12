@@ -30,7 +30,9 @@ SOFTWARE.
 
 from PyQt4 import QtCore, QtGui
 
+
 class UserInterface(object):
+
     def setupUi(self, VectorTilesReader):
         VectorTilesReader.setObjectName("VectorTilesReader")
         VectorTilesReader.resize(400, 300)

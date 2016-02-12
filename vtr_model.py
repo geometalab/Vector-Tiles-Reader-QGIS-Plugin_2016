@@ -30,16 +30,17 @@ SOFTWARE.
 
 # Handling backend operations.
 
+from .contrib.vtr_encoder import VectorTile
+from .contrib.vtr_decoder import TileData
+
+# from vtr_dialog import Dialog
+
 
 class Model:
 
-    from vtr_dialog import Dialog
-
-    from vtr_encoder import VectorTile
-    from vtr_decoder import TileData
-
     _extents = None
     vector_tile = None
+    _input = None
 
     def __init__(self, iface):
         self.iface = iface
@@ -47,25 +48,25 @@ class Model:
 
     @property
     def vector_data(self):
-        return self.vector_tile
+        return self._input
 
     @vector_data.setter
     def vector_data(self, vector):
-        self.vector_tile = vector
+        self._input = vector
         print self.decode(vector)
 
     def decode(self, tile):
-        vector_tile = self.TileData.TileData()
-        message = vector_tile.getMessage(tile)
+        self.vector_tile = TileData()
+        message = self.vector_tile.getMessage(tile)
         return message
 
     def encode(self, layers):
-        vector_tile = self.VectorTile(self._extents)
+        self.vector_tile = VectorTile(self._extents)
         if (isinstance(layers, list)):
             for layer in layers:
-                vector_tile.addFeatures(layer['features'], layer['name'])
+                self.vector_tile.addFeatures(layer['features'], layer['name'])
         else:
-            vector_tile.addFeatures(layers['features'], layers['name'])
+            self.vector_tile.addFeatures(layers['features'], layers['name'])
 
-        return vector_tile.tile.SerializeToString()
+        return self.vector_tile.tile.SerializeToString()
 
