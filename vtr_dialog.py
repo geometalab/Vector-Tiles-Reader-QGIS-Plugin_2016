@@ -28,22 +28,23 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-from PyQt4 import QtCore, QtGui 
+from PyQt4 import QtCore, QtGui
 
 from ui_vtr import UserInterface
 from vtr_model import Model
 
 
-class Dialog:
+class Dialog(QtGui.QDialog, UserInterface):
 
     model = None
     ui = None
 
     def __init__(self): 
-        QtGui.QDialog.__init__(self) 
-        # Set up the user interface from Designer. 
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
         self.ui = UserInterface()
         self.ui.setupUi(self)
+        print "something"
 
     @property
     def vector_data(self):

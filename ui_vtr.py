@@ -49,5 +49,7 @@ class UserInterface(object):
         QtCore.QMetaObject.connectSlotsByName(VectorTilesReader)
 
     def retranslateUi(self, VectorTilesReader):
-        VectorTilesReader.setWindowTitle(QtGui.QApplication.translate("VectorTilesReader", "VectorTilesReader", None, QtGui.QApplication.UnicodeUTF8))
-        
+        VectorTilesReader.setWindowTitle(QtGui.QApplication.translate("VectorTilesReader",
+                                                                      "VectorTilesReader",
+                                                                      None, QtGui.QApplication.UnicodeUTF8))
+

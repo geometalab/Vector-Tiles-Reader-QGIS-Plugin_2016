@@ -62,7 +62,7 @@ class Model:
 
     def encode(self, layers):
         self.vector_tile = VectorTile(self._extents)
-        if (isinstance(layers, list)):
+        if isinstance(layers, list):
             for layer in layers:
                 self.vector_tile.addFeatures(layer['features'], layer['name'])
         else:
