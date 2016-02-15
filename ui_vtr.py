@@ -33,23 +33,26 @@ from PyQt4 import QtCore, QtGui
 
 class UserInterface(object):
 
-    def setupUi(self, VectorTilesReader):
-        VectorTilesReader.setObjectName("VectorTilesReader")
-        VectorTilesReader.resize(400, 300)
+    button = None
+
+    def setup(self, vectortilesreader):
+        vectortilesreader.setObjectName("VectorTilesReader")
+        vectortilesreader.resize(400, 300)
         
-        self.buttonBox = QtGui.QDialogButtonBox(VectorTilesReader)
-        self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+        self.button = QtGui.QDialogButtonBox(vectortilesreader)
+        self.button.setGeometry(QtCore.QRect(30, 240, 341, 32))
+        self.button.setOrientation(QtCore.Qt.Horizontal)
+        self.button.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+        self.button.setObjectName("buttonBox")
 
-        self.retranslateUi(VectorTilesReader)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), VectorTilesReader.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), VectorTilesReader.reject)
-        QtCore.QMetaObject.connectSlotsByName(VectorTilesReader)
+        self.retranslate(self, vectortilesreader)
+        QtCore.QObject.connect(self.button, QtCore.SIGNAL("accepted()"), vectortilesreader.accept)
+        QtCore.QObject.connect(self.button, QtCore.SIGNAL("rejected()"), vectortilesreader.reject)
+        QtCore.QMetaObject.connectSlotsByName(vectortilesreader)
 
-    def retranslateUi(self, VectorTilesReader):
-        VectorTilesReader.setWindowTitle(QtGui.QApplication.translate("VectorTilesReader",
+    @staticmethod
+    def retranslate(self, vectortilesreader):
+        vectortilesreader.setWindowTitle(QtGui.QApplication.translate("VectorTilesReader",
                                                                       "VectorTilesReader",
                                                                       None, QtGui.QApplication.UnicodeUTF8))
 

@@ -39,7 +39,7 @@ from .contrib.vtr_decoder import TileData
 class Model:
 
     _extents = None
-    vector_tile = None
+    _vector_tile = None
     _input = None
 
     def __init__(self, iface):
@@ -56,17 +56,17 @@ class Model:
         print self.decode(vector)
 
     def decode(self, tile):
-        self.vector_tile = TileData()
+        self._vector_tile = TileData()
         message = self.vector_tile.getMessage(tile)
         return message
 
     def encode(self, layers):
-        self.vector_tile = VectorTile(self._extents)
+        self._vector_tile = VectorTile(self._extents)
         if isinstance(layers, list):
             for layer in layers:
-                self.vector_tile.addFeatures(layer['features'], layer['name'])
+                self._vector_tile.addFeatures(layer['features'], layer['name'])
         else:
-            self.vector_tile.addFeatures(layers['features'], layers['name'])
+            self._vector_tile.addFeatures(layers['features'], layers['name'])
 
-        return self.vector_tile.tile.SerializeToString()
+        return self._vector_tile.tile.SerializeToString()
 

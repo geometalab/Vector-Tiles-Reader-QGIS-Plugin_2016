@@ -43,8 +43,7 @@ class Dialog(QtGui.QDialog, UserInterface):
         QtGui.QDialog.__init__(self)
         # Set up the user interface from Designer.
         self.ui = UserInterface()
-        self.ui.setupUi(self)
-        print "something"
+        self.ui.setup(self)
 
     @property
     def vector_data(self):

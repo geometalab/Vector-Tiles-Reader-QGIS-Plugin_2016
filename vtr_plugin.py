@@ -50,9 +50,7 @@ class Plugin:
         self._extents = 4096
         self._dialog = Dialog()
 
-        self.initialize_gui()
-
-    def initialize_gui(self):
+    def initGui(self):
         # Create action that will start plugin configuration
         self.action = QAction(QIcon(":/plugins/vectortilereader/icon.png"),
                               "Vector Tile Reader", self.iface.mainWindow())
@@ -72,7 +70,7 @@ class Plugin:
     def run(self):
         # show the _dialog
         self._dialog .show()
-        result = self._dialog .exec_()
+        result = self._dialog.exec_()
         # See if OK was pressed
         if result == 1: 
             # do something useful (delete the line containing pass and
