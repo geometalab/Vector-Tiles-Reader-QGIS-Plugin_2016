@@ -74,6 +74,7 @@ class Plugin:
         self._dialog .show()
         result = self._dialog.exec_()
         # See if OK was pressed
+        self._model.run()
         if result == 1: 
             # do something useful (delete the line containing pass and
             # substitute with your code

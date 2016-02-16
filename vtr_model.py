@@ -30,43 +30,22 @@ SOFTWARE.
 
 # Handling backend operations.
 
-from .contrib.vtr_encoder import VectorTile
-from .contrib.vtr_decoder import TileData
-
-pbf = __import__('1434.pbf')
+from contrib.mapbox_vector_tile import Mapzen
 
 
 class Model:
 
-    _extents = None
-    _vector_tile = None
-    _input = None
-    _pbf = None
+    vector_data = None
+    _mapzen = None
 
     def __init__(self):
-        _extents = 4096
+        self._mapzen = Mapzen()
 
-    @property
-    def vector_data(self):
-        return self._input
-
-    @vector_data.setter
-    def vector_data(self, vector):
-        self._input = vector
-        print self.decode(vector)
-
-    def decode(self, tile):
-        self._vector_tile = TileData()
-        message = self._vector_tile.getMessage(tile)
-        return message
-
-    def encode(self, layers):
-        self._vector_tile = VectorTile(self._extents)
-        if isinstance(layers, list):
-            for layer in layers:
-                self._vector_tile.addFeatures(layer['features'], layer['name'])
-        else:
-            self._vector_tile.addFeatures(layers['features'], layers['name'])
-
-        return self._vector_tile.tile.SerializeToString()
-
+    def run(self):
+        with open('/home/dijan/.qgis2/python/plugins/vectortilereader/data/1434.pbf', 'rb') \
+                as f:
+            data = f.read()
+        decoded_data = self._mapzen.decode(data)
+        with open('/home/dijan/.qgis2/python/plugins/vectortilereader/data/out4.txt', 'w') \
+                as f:
+            f.write(repr(decoded_data))
