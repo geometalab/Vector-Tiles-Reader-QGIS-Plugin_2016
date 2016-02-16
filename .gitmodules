@@ -1,0 +1,3 @@
+[submodule "contrib/mapbox-vector-tile"]
+	path = contrib/mapbox-vector-tile
+	url = https://github.com/mapzen/mapbox-vector-tile.git

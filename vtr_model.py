@@ -33,7 +33,7 @@ SOFTWARE.
 from .contrib.vtr_encoder import VectorTile
 from .contrib.vtr_decoder import TileData
 
-# from vtr_dialog import Dialog
+pbf = __import__('1434.pbf')
 
 
 class Model:
@@ -41,9 +41,9 @@ class Model:
     _extents = None
     _vector_tile = None
     _input = None
+    _pbf = None
 
-    def __init__(self, iface):
-        self.iface = iface
+    def __init__(self):
         _extents = 4096
 
     @property
@@ -57,7 +57,7 @@ class Model:
 
     def decode(self, tile):
         self._vector_tile = TileData()
-        message = self.vector_tile.getMessage(tile)
+        message = self._vector_tile.getMessage(tile)
         return message
 
     def encode(self, layers):

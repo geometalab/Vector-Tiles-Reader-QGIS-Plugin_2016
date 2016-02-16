@@ -37,6 +37,7 @@ from qgis.core import *
 import resources
 
 from vtr_dialog import Dialog
+from vtr_dialog import Model
 
 
 class Plugin:
@@ -49,6 +50,7 @@ class Plugin:
         self.iface = iface
         self._extents = 4096
         self._dialog = Dialog()
+        self._model = Model()
 
     def initGui(self):
         # Create action that will start plugin configuration
