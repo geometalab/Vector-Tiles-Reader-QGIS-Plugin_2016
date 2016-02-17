@@ -26,33 +26,98 @@ SOFTWARE.
 
 """
 
-# @author Dijan Helbling
+# Form implementation generated from reading ui file 'ui_vtr.ui'
+#
+# Created: Wed Feb 17 14:22:35 2016
+#      by: PyQt4 UI code generator 4.11.2
+#
+# WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 
 class UserInterface(object):
 
     button = None
 
-    def setup(self, vectortilesreader):
-        vectortilesreader.setObjectName("VectorTilesReader")
-        vectortilesreader.resize(400, 300)
-        
-        self.button = QtGui.QDialogButtonBox(vectortilesreader)
-        self.button.setGeometry(QtCore.QRect(30, 240, 341, 32))
-        self.button.setOrientation(QtCore.Qt.Horizontal)
-        self.button.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
-        self.button.setObjectName("buttonBox")
+    def setup(self, VectorTilesReader):
+        VectorTilesReader.setObjectName(_fromUtf8("VectorTilesReader"))
+        VectorTilesReader.resize(450, 175)
+        VectorTilesReader.setMaximumSize(QtCore.QSize(450, 250))
+        self.verticalLayoutWidget = QtGui.QWidget(VectorTilesReader)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 20, 411, 82))
+        self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.label_1 = QtGui.QLabel(self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_1.setFont(font)
+        self.label_1.setObjectName(_fromUtf8("label_1"))
+        self.horizontalLayout_2.addWidget(self.label_1)
+        self.textBrowser_1 = QtGui.QTextBrowser(self.verticalLayoutWidget)
+        self.textBrowser_1.setMaximumSize(QtCore.QSize(275, 25))
+        self.textBrowser_1.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.textBrowser_1.setObjectName(_fromUtf8("textBrowser_1"))
+        self.horizontalLayout_2.addWidget(self.textBrowser_1)
+        self.toolButton_1 = QtGui.QToolButton(self.verticalLayoutWidget)
+        self.toolButton_1.setMaximumSize(QtCore.QSize(75, 25))
+        self.toolButton_1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.toolButton_1.setObjectName(_fromUtf8("toolButton_1"))
+        self.horizontalLayout_2.addWidget(self.toolButton_1)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.label_2 = QtGui.QLabel(self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.horizontalLayout.addWidget(self.label_2)
+        self.textBrowser_2 = QtGui.QTextBrowser(self.verticalLayoutWidget)
+        self.textBrowser_2.setMaximumSize(QtCore.QSize(275, 25))
+        self.textBrowser_2.setInputMethodHints(QtCore.Qt.ImhUrlCharactersOnly)
+        self.textBrowser_2.setObjectName(_fromUtf8("textBrowser_2"))
+        self.horizontalLayout.addWidget(self.textBrowser_2)
+        self.toolButton_2 = QtGui.QToolButton(self.verticalLayoutWidget)
+        self.toolButton_2.setMaximumSize(QtCore.QSize(75, 25))
+        self.toolButton_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.toolButton_2.setPopupMode(QtGui.QToolButton.InstantPopup)
+        self.toolButton_2.setObjectName(_fromUtf8("toolButton_2"))
+        self.horizontalLayout.addWidget(self.toolButton_2)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.buttonBox = QtGui.QDialogButtonBox(VectorTilesReader)
+        self.buttonBox.setGeometry(QtCore.QRect(240, 120, 176, 27))
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
 
-        self.retranslate(self, vectortilesreader)
-        QtCore.QObject.connect(self.button, QtCore.SIGNAL("accepted()"), vectortilesreader.accept)
-        QtCore.QObject.connect(self.button, QtCore.SIGNAL("rejected()"), vectortilesreader.reject)
-        QtCore.QMetaObject.connectSlotsByName(vectortilesreader)
+        self.retranslateUi(VectorTilesReader)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), VectorTilesReader.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), VectorTilesReader.reject)
+        QtCore.QMetaObject.connectSlotsByName(VectorTilesReader)
 
-    @staticmethod
-    def retranslate(self, vectortilesreader):
-        vectortilesreader.setWindowTitle(QtGui.QApplication.translate("VectorTilesReader",
-                                                                      "VectorTilesReader",
-                                                                      None, QtGui.QApplication.UnicodeUTF8))
-
+    def retranslateUi(self, VectorTilesReader):
+        VectorTilesReader.setWindowTitle(_translate("VectorTilesReader", "Dialog", None))
+        self.label_1.setText(_translate("VectorTilesReader", "local", None))
+        self.toolButton_1.setText(_translate("VectorTilesReader", "browse", None))
+        self.label_2.setText(_translate("VectorTilesReader", "URL", None))
+        self.toolButton_2.setText(_translate("VectorTilesReader", "browse", None))

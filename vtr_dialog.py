@@ -44,16 +44,3 @@ class Dialog(QtGui.QDialog, UserInterface):
         # Set up the user interface from Designer.
         self.ui = UserInterface()
         self.ui.setup(self)
-
-    @property
-    def vector_data(self):
-        self.model = Model()
-        return self.model.vector_data()
-
-    @vector_data.setter
-    def vector_data(self, vector):
-        # TODO bool vector
-        self.model = Model()
-        self.model.vector_data(vector)
-
-
