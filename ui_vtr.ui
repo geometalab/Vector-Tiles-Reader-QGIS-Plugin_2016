@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>175</height>
+    <height>170</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -45,15 +45,15 @@
        </widget>
       </item>
       <item>
-       <widget class="QTextBrowser" name="textBrowser_1">
+       <widget class="QTextEdit" name="textEdit">
         <property name="maximumSize">
          <size>
           <width>275</width>
           <height>25</height>
          </size>
         </property>
-        <property name="inputMethodHints">
-         <set>Qt::ImhNone</set>
+        <property name="cursor" stdset="0">
+         <cursorShape>IBeamCursor</cursorShape>
         </property>
        </widget>
       </item>
@@ -91,15 +91,15 @@
        </widget>
       </item>
       <item>
-       <widget class="QTextBrowser" name="textBrowser_2">
+       <widget class="QTextEdit" name="textEdit_2">
         <property name="maximumSize">
          <size>
           <width>275</width>
           <height>25</height>
          </size>
         </property>
-        <property name="inputMethodHints">
-         <set>Qt::ImhUrlCharactersOnly</set>
+        <property name="cursor" stdset="0">
+         <cursorShape>IBeamCursor</cursorShape>
         </property>
        </widget>
       </item>
@@ -134,6 +134,9 @@
      <width>176</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>

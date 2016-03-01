@@ -50,7 +50,7 @@ class Plugin:
         self.iface = iface
         self._extents = 4096
         self._dialog = Dialog()
-        self._model = Model()
+        self._model = Model(iface)
 
     def initGui(self):
         # Create action that will start plugin configuration
@@ -74,10 +74,9 @@ class Plugin:
         self._dialog .show()
         result = self._dialog.exec_()
         # See if OK was pressed
-        self._model.run()
-        if result == 1: 
-            # do something useful (delete the line containing pass and
-            # substitute with your code
-            pass 
+        if result == 1:
+            # self._model.load_layer()
+            # self._model.geojson()
+            self._model.decode_file()
 
 
