@@ -75,8 +75,5 @@ class Plugin:
         result = self._dialog.exec_()
         # See if OK was pressed
         if result == 1:
-            # self._model.load_layer()
-            # self._model.geojson()
             self._model.decode_file()
-
-
+            self._model.load_layer()

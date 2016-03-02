@@ -32,14 +32,18 @@ SOFTWARE.
 from qgis.core import *
 
 from contrib.mapbox_vector_tile import Mapzen
+from contrib.renderer import *
 
 import json
+
+easting, northing, zoom = 2144, 1434, 12
+extent = 4096
 
 
 class Model:
 
-    _pbf_src = '/home/dijan/.qgis2/python/plugins/vectortilereader/data/9_267_178.pbf'
-    _txt_src = '/home/dijan/.qgis2/python/plugins/vectortilereader/data/9_267_178.geojson'
+    _pbf_src = '/home/dijan/.qgis2/python/plugins/vectortilereader/data/12_2144_1434.pbf'
+    _txt_src = '/home/dijan/.qgis2/python/plugins/vectortilereader/data/12_2144_1434.geojson'
     _mapzen = None
 
     def __init__(self, iface):
@@ -52,19 +56,18 @@ class Model:
         decoded_data = self._mapzen.decode(data)
         self.geojson(decoded_data)
 
+    def geojson(self, decoded_data):
+        decoded_points = pbf_points(decoded_data)
+
+        temporary_dict = points_to_geojson(decoded_points)
+        with open(self._txt_src, 'w') as f:
+            json.dump(temporary_dict, f)
+
     def load_layer(self):
         layer = QgsVectorLayer(self._txt_src, 'test', 'ogr')
 
-        if layer.isValid():
-            QgsMessageLog.logMessage("Layer load successful!")
-        else:
+        if not layer.isValid():
             QgsMessageLog.logMessage("Layer failed to load!")
-
-    def geojson(self, decoded_data):
-        decoded_points = pbf_points(decoded_data)
-        geojson = points_to_geojson(decoded_points)
-        with open(self._txt_src, 'w') as f:
-            f.write(repr(geojson))
 
 
 def pbf_points(decoded_data):
@@ -88,9 +91,7 @@ def points_to_geojson(decoded_data):
                 build_object(decoded_data[name]["features"][index])
             )
 
-    geojson = json.dumps(temporary_dict)
-    assert isinstance(geojson, object)
-    return geojson
+    return temporary_dict
 
 
 def build_object(points):
@@ -99,9 +100,18 @@ def build_object(points):
         "geometry": {
             "type": "Point",
             "coordinates": [
-                points["geometry"][0]
+                mercator_geometry(points)
             ]
         },
         "properties": points["properties"]
     }
     return feature
+
+
+def mercator_geometry(points):
+    tmp = SphericalMercator().bbox(easting, northing, zoom)
+    delta_x = tmp[2] - tmp[0]
+    delta_y = tmp[3] - tmp[1]
+    merc_easting = tmp[0] + delta_x / extent * points["geometry"][0][0]
+    merc_northing = tmp[1] + delta_y / extent * points["geometry"][0][1]
+    return [merc_easting, merc_northing]
