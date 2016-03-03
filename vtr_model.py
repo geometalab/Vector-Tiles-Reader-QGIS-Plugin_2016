@@ -64,10 +64,10 @@ class Model:
             json.dump(temporary_dict, f)
 
     def load_layer(self):
-        layer = QgsVectorLayer(self._txt_src, 'test', 'ogr')
+        layer = self._iface.addVectorLayer(self._txt_src, "test layer", "ogr")
 
-        if not layer.isValid():
-            QgsMessageLog.logMessage("Layer failed to load!")
+        if not layer:
+            print "Layer failed to load!"
 
 
 def pbf_points(decoded_data):
