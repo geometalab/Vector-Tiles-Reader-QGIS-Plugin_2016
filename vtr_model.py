@@ -67,7 +67,11 @@ class Model:
         layer = self._iface.addVectorLayer(self._txt_src, "test layer", "ogr")
 
         if not layer:
-            print "Layer failed to load!"
+            QgsMessageLog.logMessage("Layer failed to load!")
+
+        for field in layer.pendingFields():
+            QgsMessageLog.logMessage(field.name())
+            QgsMessageLog.logMessage(field.typeName())
 
 
 def pbf_points(decoded_data):
@@ -82,6 +86,12 @@ def pbf_points(decoded_data):
 def points_to_geojson(decoded_data):
     temporary_dict = {
         "type": "FeatureCollection",
+        "crs": {
+            "type": "EPSG",
+            "properties": {
+                "code": 4326
+            }
+        },
         "features": []
     }
 
@@ -99,9 +109,9 @@ def build_object(points):
         "type": "Feature",
         "geometry": {
             "type": "Point",
-            "coordinates": [
+            "coordinates":
                 mercator_geometry(points)
-            ]
+
         },
         "properties": points["properties"]
     }
@@ -114,4 +124,4 @@ def mercator_geometry(points):
     delta_y = tmp[3] - tmp[1]
     merc_easting = tmp[0] + delta_x / extent * points["geometry"][0][0]
     merc_northing = tmp[1] + delta_y / extent * points["geometry"][0][1]
-    return [merc_easting, merc_northing]
+    return [int(merc_easting), int(merc_northing)]
