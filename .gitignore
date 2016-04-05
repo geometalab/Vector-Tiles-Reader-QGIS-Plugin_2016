@@ -1,0 +1,10 @@
+*.pyc
+*.zip
+*.iso
+*.gz
+*.jar
+*.rar
+*.tar
+*.dll
+*.pyo
+out.txt

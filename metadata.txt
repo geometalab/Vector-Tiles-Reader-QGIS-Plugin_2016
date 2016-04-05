@@ -1,0 +1,37 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=VectorTilesReader
+qgisMinimumVersion=2.12
+description=Vector Tile Reader
+about=This plugin allows you to import vector tiles to qgis.
+version=0.0.1
+author=Dijan Helbling
+email=geometalab@gmail.com
+
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=vector, tile, reader
+
+homepage=http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
+tracker=https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
+repository=https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin
+category=Plugins
+icon=icon.png
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
