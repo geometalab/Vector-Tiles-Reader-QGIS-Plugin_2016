@@ -33,8 +33,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 
-# Initialize Qt resources from file resources.py
-import resources
+import os
 
 from vtr_dialog import Dialog
 from vtr_dialog import Model
@@ -75,5 +74,5 @@ class Plugin:
         result = self._dialog.exec_()
         # See if OK was pressed
         if result == 1:
-            self._model.decode_file()
-            self._model.load_layer()
+            directory = os.path.dirname(os.path.abspath(__file__))
+            self._model.mbtiles("%s/data/zurich.mbtiles" % directory)
