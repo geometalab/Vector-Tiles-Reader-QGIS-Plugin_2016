@@ -32,7 +32,7 @@ SOFTWARE.
 from qgis.core import *
 
 from contrib.mapbox_vector_tile import Mapzen
-from contrib.renderer import *
+from contrib.globalmaptiles import *
 
 import json, sqlite3, gzip, StringIO
 
@@ -45,7 +45,7 @@ class Model:
     _json_src = "%s/data/5458.geojson" % directory
     _tmp = "%s/data/tmp.txt" % directory
     _mapzen = None
-    _geo = [13, 408, 5458]
+    _geo = [13, 408, 5458]  # if no geometry is given.
 
     def __init__(self, iface):
         self._mapzen = Mapzen()
@@ -148,10 +148,9 @@ def mercator_geometry(coordinates, type, geometry):
 def calculate_geometry(coordinates, geometry):
     # calculate the mercator geometry using external library
     # geometry:: 0: zoom, 1: easting, 2: northing
-    tmp = SphericalMercator().bbox(geometry[2], geometry[1], geometry[0])
+    tmp = GlobalMercator().TileBounds(geometry[1], geometry[2], geometry[0])
     delta_x = tmp[2] - tmp[0]
     delta_y = tmp[3] - tmp[1]
     merc_easting = int(tmp[0] + delta_x / extent * coordinates[0])
     merc_northing = int(tmp[1] + delta_y / extent * coordinates[1])
     return [merc_easting, merc_northing]
-
