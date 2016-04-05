@@ -34,7 +34,7 @@ from qgis.core import *
 from contrib.mapbox_vector_tile import Mapzen
 from contrib.globalmaptiles import *
 
-import json, sqlite3, gzip, StringIO
+import json, sqlite3, gzip, os
 
 extent = 4096
 geo = []  # 0: zoom, 1: easting, 2: northing
@@ -42,7 +42,7 @@ geo = []  # 0: zoom, 1: easting, 2: northing
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
-    _json_src = "%s/data/5458.geojson" % directory
+    _json_src = "%s/data/test.geojson" % directory
     _tmp = "%s/data/tmp.txt" % directory
     _mapzen = None
     _geo = [13, 408, 5458]  # if no geometry is given.
