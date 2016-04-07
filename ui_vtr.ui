@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>vtr_dialog</class>
+ <class>VtrDialog</class>
  <widget class="QDialog" name="VtrDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>200</height>
+    <width>492</width>
+    <height>162</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Vector Tile Reader</string>
+   <string>Add Vector Tiles Layer</string>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>550</width>
-     <height>80</height>
+     <width>451</width>
+     <height>51</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -27,22 +27,6 @@
      <widget class="QLabel" name="label">
       <property name="text">
        <string>file name</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="statusNotificationLabel">
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -62,9 +46,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>120</y>
-     <width>550</width>
-     <height>80</height>
+     <y>89</y>
+     <width>451</width>
+     <height>51</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -107,14 +91,7 @@
     </item>
    </layout>
   </widget>
-  <zorder>gridLayoutWidget</zorder>
-  <zorder>charsetWidget</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>geometryWidget</zorder>
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="geometryTypeGroup"/>
- </buttongroups>
 </ui>

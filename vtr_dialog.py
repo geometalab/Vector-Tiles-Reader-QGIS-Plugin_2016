@@ -53,8 +53,12 @@ class Dialog:
         self.new_dialog.show()
         result = self.new_dialog.exec_()
         if result == 1:
-            directory = os.path.dirname(os.path.abspath(__file__))
-            self._model.mbtiles("%s/data/zurich.mbtiles" % directory)
+            file_path = self.new_dialog.filePath.text()
+            if not os.path.exists(file_path):
+                #  take a default mbtile if non is selected.
+                dir_path = os.path.dirname(os.path.abspath(__file__))
+                file_path = "%s/data/zurich.mbtiles" % dir_path
+            self._model.mbtiles(file_path)
 
     def _init_connections(self):
         self.new_dialog.acceptButton.clicked.connect(self.new_dialog.accept)
@@ -73,15 +77,15 @@ class Dialog:
             self.new_dialog.filePath.setText(vtr_file_path)
         self.new_dialog.activateWindow()
 
-    @staticmethod
-    def _default_directory(settings):
-        current_directory = settings.value('lastUsedFileOpenDir', '')
-        if not current_directory:
-            absolute_project_path = QgsProject.instance().readPath("./")
-            current_directory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) \
-                if absolute_project_path == "./" \
-                else absolute_project_path
-        return current_directory
-
     def _new_default_directory(self, path):
         self._settings.setValue('lastUsedFileOpenDir', path)
+
+
+def _default_directory(settings):
+    current_directory = settings.value('lastUsedFileOpenDir', '')
+    if not current_directory:
+        absolute_project_path = QgsProject.instance().readPath("./")
+        current_directory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) \
+            if absolute_project_path == "./" \
+            else absolute_project_path
+    return current_directory

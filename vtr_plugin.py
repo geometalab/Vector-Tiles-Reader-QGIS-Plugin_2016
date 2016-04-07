@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-import os
-
 from vtr_dialog import Dialog
 from vtr_dialog import Model
 
@@ -45,23 +43,15 @@ class Plugin:
 
     def initGui(self):
         vtr_layer_icon = QIcon(':/plugins/vectortilereader/icon.png')
-        self.vtr_action = QAction(vtr_layer_icon, "Vector Tile Reader", self._iface.mainWindow())
+        self.vtr_action = QAction(vtr_layer_icon, "Add Vector Tiles Layer", self._iface.mainWindow())
         self._iface.addToolBarIcon(self.vtr_action)
-        self._iface.addPluginToMenu("&Vector Tile Reader", self.vtr_action)
-        self._iface.addPluginToVectorMenu("&Vector Tile Reader", self.vtr_action)
+        self._iface.addPluginToMenu("&Add Vector Tiles Layer", self.vtr_action)
+        self._iface.addPluginToVectorMenu("&Add Vector Tiles Layer", self.vtr_action)
         self.vtr_action.triggered.connect(
             lambda: Dialog(self._iface, self.settings).create_dialog())
 
     def unload(self):
         # Remove the plugin menu item and icon
         self._iface.removeToolBarIcon(self.vtr_action)
-        self._iface.removePluginMenu("&Vector Tile Reader", self.vtr_action)
-        self._iface.removePluginVectorMenu("&Vector Tile Reader", self.vtr_action)
-
-    def run(self):
-        # show the _dialog
-        self._dialog.show()
-        result = self._dialog.exec_()
-        if result == 1:
-            directory = os.path.dirname(os.path.abspath(__file__))
-            self._model.mbtiles("%s/data/zurich.mbtiles" % directory)
+        self._iface.removePluginMenu("&Add Vector Tiles Layer", self.vtr_action)
+        self._iface.removePluginVectorMenu("&Add Vector Tiles Layer", self.vtr_action)
