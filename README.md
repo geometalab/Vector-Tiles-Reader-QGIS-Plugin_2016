@@ -16,7 +16,7 @@ This plugin imports vector tiles into the QGIS environment.
 
 **license**
 
-The Vector Tile Reader plugin is released under the MIT license (see LICENSE)
+The Vector Tile Reader plugin is released under the GNU license (see LICENSE)
 
 **contributors**
 
