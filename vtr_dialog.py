@@ -44,7 +44,7 @@ class Dialog:
         self._model = Model(self._iface)
         self._init_connections()
         self._settings = project_settings
-        self._browse_open_path = self._default_directory(project_settings)
+        self._browse_open_path = _default_directory(project_settings)
 
     def create_dialog(self):
         if self.new_dialog.isVisible():

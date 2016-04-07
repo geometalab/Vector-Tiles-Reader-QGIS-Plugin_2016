@@ -38,51 +38,12 @@ geo = []  # 0: zoom, 1: easting, 2: northing
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
+    tmp_directory = "%s/tmp/" % directory
     _json_src = "%s/data/test.geojson" % directory
     _tmp = "%s/data/tmp.txt" % directory
     _mapzen = None
     _geo = [13, 408, 5458]  # if no geometry is given.
-
-    def __init__(self, iface):
-        self._mapzen = Mapzen()
-        self._iface = iface
-
-    def mbtiles(self, database_source):
-        # connect to a mb_tile file and extract the data
-        con = sqlite3.connect(database_source)
-        c = con.cursor()
-        c.execute("SELECT * FROM tiles WHERE zoom_level = 14 LIMIT 1;")
-
-        for index, row in enumerate(c):
-            self._geo = [row[0], row[1], row[2]]
-            with open(self._tmp, 'wb') as f:
-                f.write(row[3])
-            with gzip.open(self._tmp, 'rb') as f:
-                file_content = f.read()
-            self.decode_file(file_content)
-
-    def decode_file(self, data):
-        # read the binary data file (pbf) using the library from Mapzen
-        decoded_data = self._mapzen.decode(data)
-        with open (self._tmp, 'w') as f:
-            json.dump(decoded_data, f)
-        self.geojson(decoded_data)
-
-    def geojson(self, decoded_data):
-        # convert the extracted pbf to a standard geojson
-        temporary_dict = write_to_geojson(decoded_data, self._geo)
-        with open(self._json_src, "w") as f:
-            json.dump(temporary_dict, f)
-        self.load_layer()
-
-    def load_layer(self):
-        layer_name = "{}_{}_{}".format(self._geo[0], self._geo[2], self._geo[1])
-        self._iface.addVectorLayer(self._json_src, layer_name, "ogr")
-
-
-def write_to_geojson(decoded_data, geometry):
-    # given  geojson structure, add Feature step by step
-    temporary_dict = {
+    geojson_data = {
         "type": "FeatureCollection",
         "crs": {
             "type": "EPSG",
@@ -93,12 +54,48 @@ def write_to_geojson(decoded_data, geometry):
         "features": []
     }
 
-    for name in decoded_data:
-        for index, value in enumerate(decoded_data[name]['features']):
-            temporary_dict["features"].append(
-                build_object(decoded_data[name]["features"][index], geometry)
-            )
-    return temporary_dict
+    def __init__(self, iface):
+        self._mapzen = Mapzen()
+        self._iface = iface
+        self.temporary_layer = []
+
+    def mbtiles(self, database_source):
+        # connect to a mb_tile file and extract the data
+        con = sqlite3.connect(database_source)
+        c = con.cursor()
+        c.execute("SELECT * FROM tiles WHERE zoom_level = 12 limit 50;")
+
+        for index, row in enumerate(c):
+            self._geo = [row[0], row[1], row[2]]
+
+            with open(self._tmp, 'wb') as f:
+                f.write(row[3])
+            with gzip.open(self._tmp, 'rb') as f:
+                file_content = f.read()
+
+            decoded_data = self.decode_file(file_content)
+            self.write_features(decoded_data, self._geo)
+            os.remove(self._tmp)
+
+        with open(self._json_src, "w") as f:
+            json.dump(self.geojson_data, f)
+        self.load_layer()
+
+    def decode_file(self, data):
+        # read the binary data file (pbf) using the library from Mapzen
+        return self._mapzen.decode(data)
+
+    def write_features(self, decoded_data, geometry):
+        for name in decoded_data:
+            for index, value in enumerate(decoded_data[name]['features']):
+                self.geojson_data["features"].append(
+                    build_object(decoded_data[name]["features"][index], geometry)
+                )
+        return self.geojson_data
+
+    def load_layer(self):
+        layer_name = "{}_{}_{}".format(self._geo[0], self._geo[2], self._geo[1])
+        self._iface.addVectorLayer(self._json_src, layer_name, "ogr")
 
 
 def build_object(data, geometry):
