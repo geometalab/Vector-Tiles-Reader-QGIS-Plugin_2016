@@ -2,27 +2,23 @@
 
 """ THIS COMMENT MUST NOT REMAIN INTACT
 
-The MIT License (MIT)
+GNU GENERAL PUBLIC LICENSE
 
-Copyright (c) 2015 
+Copyright (c) 2015 geometalab HSR
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 """
 
@@ -32,9 +28,9 @@ SOFTWARE.
 from qgis.core import *
 
 from contrib.mapbox_vector_tile import Mapzen
-from contrib.renderer import *
+from contrib.globalmaptiles import *
 
-import json, sqlite3, gzip, StringIO
+import json, sqlite3, gzip, os
 
 extent = 4096
 geo = []  # 0: zoom, 1: easting, 2: northing
@@ -42,10 +38,10 @@ geo = []  # 0: zoom, 1: easting, 2: northing
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
-    _json_src = "%s/data/5458.geojson" % directory
+    _json_src = "%s/data/test.geojson" % directory
     _tmp = "%s/data/tmp.txt" % directory
     _mapzen = None
-    _geo = [13, 408, 5458]
+    _geo = [13, 408, 5458]  # if no geometry is given.
 
     def __init__(self, iface):
         self._mapzen = Mapzen()
@@ -148,10 +144,9 @@ def mercator_geometry(coordinates, type, geometry):
 def calculate_geometry(coordinates, geometry):
     # calculate the mercator geometry using external library
     # geometry:: 0: zoom, 1: easting, 2: northing
-    tmp = SphericalMercator().bbox(geometry[2], geometry[1], geometry[0])
+    tmp = GlobalMercator().TileBounds(geometry[1], geometry[2], geometry[0])
     delta_x = tmp[2] - tmp[0]
     delta_y = tmp[3] - tmp[1]
     merc_easting = int(tmp[0] + delta_x / extent * coordinates[0])
     merc_northing = int(tmp[1] + delta_y / extent * coordinates[1])
     return [merc_easting, merc_northing]
-

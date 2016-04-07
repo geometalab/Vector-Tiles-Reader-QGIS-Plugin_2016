@@ -11,7 +11,7 @@ name=VectorTilesReader
 qgisMinimumVersion=2.12
 description=Vector Tile Reader
 about=This plugin allows you to import vector tiles to qgis.
-version=0.0.1
+version=0.0.4
 author=Dijan Helbling
 email=geometalab@gmail.com
 
@@ -23,7 +23,7 @@ email=geometalab@gmail.com
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=vector, tile, reader
+tags=vector tile, mbtiles
 
 homepage=http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
 tracker=https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
