@@ -28,10 +28,8 @@ SOFTWARE.
 
 # @author Dijan Helbling
 
-# Import the PyQt and QGIS libraries
-from PyQt4.QtCore import * 
+from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from qgis.core import *
 
 import os
 
@@ -41,38 +39,33 @@ from vtr_dialog import Model
 
 class Plugin:
     _dialog = None
-    _connection = None
-    _extents = 4096
-    action = None
+    _model = None
+    vtr_action = None
 
     def __init__(self, iface):
-        self.iface = iface
-        self._extents = 4096
-        self._dialog = Dialog()
+        self._iface = iface
         self._model = Model(iface)
+        self.settings = QSettings("Vector Tile Reader","vectortilereader")
 
     def initGui(self):
-        # Create action that will start plugin configuration
-        self.action = QAction(QIcon(":/plugins/vectortilereader/icon.png"),
-                              "Vector Tile Reader", self.iface.mainWindow())
-
-        # connect the action to the run method
-        QObject.connect(self.action, SIGNAL("activated()"), self.run) 
-
-        # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu("&Vector Tile Reader", self.action)
+        vtr_layer_icon = QIcon(':/plugins/vectortilereader/icon.png')
+        self.vtr_action = QAction(vtr_layer_icon, "Vector Tile Reader", self._iface.mainWindow())
+        self._iface.addToolBarIcon(self.vtr_action)
+        self._iface.addPluginToMenu("&Vector Tile Reader", self.vtr_action)
+        self._iface.addPluginToVectorMenu("&Vector Tile Reader", self.vtr_action)
+        self.vtr_action.triggered.connect(
+            lambda: Dialog(self._iface, self.settings).create_dialog())
 
     def unload(self):
         # Remove the plugin menu item and icon
-        self.iface.removePluginMenu("&Vector Tile Reader",self.action)
-        self.iface.removeToolBarIcon(self.action)
+        self._iface.removeToolBarIcon(self.vtr_action)
+        self._iface.removePluginMenu("&Vector Tile Reader", self.vtr_action)
+        self._iface.removePluginVectorMenu("&Vector Tile Reader", self.vtr_action)
 
     def run(self):
         # show the _dialog
-        self._dialog .show()
+        self._dialog.show()
         result = self._dialog.exec_()
-        # See if OK was pressed
         if result == 1:
             directory = os.path.dirname(os.path.abspath(__file__))
             self._model.mbtiles("%s/data/zurich.mbtiles" % directory)

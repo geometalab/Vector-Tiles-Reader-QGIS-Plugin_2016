@@ -23,3 +23,10 @@ The Vector Tile Reader plugin is released under the MIT license (see LICENSE)
 Vector Tile Reader has been developed by
 
 * Dijan Helbling (Version 1)
+
+**acknowledgment**
+
+* Stefan Keller
+* Carmelo Schumacher
+* Nicola Jordan
+* Raphael Das Gupta
