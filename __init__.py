@@ -34,7 +34,7 @@ def description():
 
 
 def version():
-    return "Version 0.0.1"
+    return "Version 0.0.5"
 
 
 def qgisMinimumVersion():
