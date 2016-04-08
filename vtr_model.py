@@ -24,13 +24,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # @author Dijan Helbling
 
-# Handling backend operations.
-from qgis.core import *
-
 from contrib.mapbox_vector_tile import Mapzen
 from contrib.globalmaptiles import *
 
-import json, sqlite3, gzip, os
+from qgis.gui import *
+from qgis.core import *
+import qgis.utils
+
+import json
+import sqlite3
+import gzip
+import os
+import uuid
+import Canvas
 
 extent = 4096
 geo = []  # 0: zoom, 1: easting, 2: northing
@@ -38,11 +44,10 @@ geo = []  # 0: zoom, 1: easting, 2: northing
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
-    tmp_directory = "%s/tmp/" % directory
-    _json_src = "%s/data/test.geojson" % directory
-    _tmp = "%s/data/tmp.txt" % directory
+    _tmp = "%s/data/tmp/tmp.txt" % directory
+    _tmp2 = "%s/data/tmp/tmp2.txt" % directory
     _mapzen = None
-    _geo = [13, 408, 5458]  # if no geometry is given.
+    _geo = []
     geojson_data = {
         "type": "FeatureCollection",
         "crs": {
@@ -54,16 +59,33 @@ class Model:
         "features": []
     }
 
-    def __init__(self, iface):
+    def __init__(self, iface, database_source):
         self._mapzen = Mapzen()
         self._iface = iface
         self.temporary_layer = []
+        self.database_source = database_source
+        # self._init_connections()
+        self.mbtiles()
 
-    def mbtiles(self, database_source):
+    # def _init_connections(self):
+    #     vector_layer = QgsVectorLayer()
+    #     vector_layer.geometryChanged.connect(self._refresh)
+    #     vector_layer.screenUpdateRequested.connect(self._refresh)
+    #     QgsMapCanvas().scaleChanged.connect(self._refresh)
+    #
+    # def _refresh(self):
+    #     scale = self.canvas.scale()
+    #     coordinates = self.canvas.xyCoordinates()
+    #     with open(self._tmp2, 'w') as f:
+    #         f.write(scale)
+    #         f.write(coordinates)
+    #     self.mbtiles(scale=scale, coordinates=coordinates)
+
+    def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
-        con = sqlite3.connect(database_source)
+        con = sqlite3.connect(self.database_source)
         c = con.cursor()
-        c.execute("SELECT * FROM tiles WHERE zoom_level = 12 limit 50;")
+        c.execute("SELECT * FROM tiles WHERE zoom_level = 12;")
 
         for index, row in enumerate(c):
             self._geo = [row[0], row[1], row[2]]
@@ -77,9 +99,12 @@ class Model:
             self.write_features(decoded_data, self._geo)
             os.remove(self._tmp)
 
-        with open(self._json_src, "w") as f:
+        json_src = self.unique_file_name
+
+        with open(json_src, "w") as f:
             json.dump(self.geojson_data, f)
-        self.load_layer()
+
+        self.load_layer(json_src)
 
     def decode_file(self, data):
         # read the binary data file (pbf) using the library from Mapzen
@@ -93,9 +118,23 @@ class Model:
                 )
         return self.geojson_data
 
-    def load_layer(self):
-        layer_name = "{}_{}_{}".format(self._geo[0], self._geo[2], self._geo[1])
-        self._iface.addVectorLayer(self._json_src, layer_name, "ogr")
+    def load_layer(self, json_src):
+        self._iface.addVectorLayer(json_src, "a name", "ogr")
+
+    @property
+    def unique_file_name(self):
+        unique_name = uuid.uuid4()
+        return "%s/data/tmp/%s.geojson" % (self.directory, unique_name)
+
+
+# def zoom_level():
+#     scale = QgsMapCanvas().scale()
+#     scale_index = [500000000, 250000000, 150000000, 70000000, 35000000, 15000000, 10000000,
+#                    4000000, 2000000, 1000000, 500000, 250000, 150000, 70000, 35000]
+#     index = 0
+#     while index < len(scale_index) and scale < scale_index[index]:
+#         index += 1
+#     return index
 
 
 def build_object(data, geometry):
@@ -124,7 +163,7 @@ def geometry_type(data):
     return options[data["type"]]
 
 
-def mercator_geometry(coordinates, type, geometry):
+def mercator_geometry(coordinates, geo_type, geometry):
     # recursively iterate through all the points and create an array,
     # if it is just a point remove the outer barckets.
     tmp = []
@@ -133,7 +172,7 @@ def mercator_geometry(coordinates, type, geometry):
             tmp.append(calculate_geometry(coordinates[index], geometry))
         else:
             tmp.append(mercator_geometry(coordinates[index], 0, geometry))
-    if type == 1:
+    if geo_type == 1:
         return tmp[0]
     return tmp
 

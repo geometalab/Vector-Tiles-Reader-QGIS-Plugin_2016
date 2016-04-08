@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from qgis import utils
 
 from vtr_dialog import Dialog
 from vtr_dialog import Model
@@ -38,7 +39,6 @@ class Plugin:
 
     def __init__(self, iface):
         self._iface = iface
-        self._model = Model(iface)
         self.settings = QSettings("Vector Tile Reader","vectortilereader")
 
     def initGui(self):
@@ -48,7 +48,8 @@ class Plugin:
         self._iface.addPluginToMenu("&Add Vector Tiles Layer", self.vtr_action)
         self._iface.addPluginToVectorMenu("&Add Vector Tiles Layer", self.vtr_action)
         self.vtr_action.triggered.connect(
-            lambda: Dialog(self._iface, self.settings).create_dialog())
+            lambda: Dialog(self._iface, self.settings).create_dialog()
+        )
 
     def unload(self):
         # Remove the plugin menu item and icon

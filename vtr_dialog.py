@@ -41,7 +41,6 @@ class Dialog:
         self.new_dialog = VtrDialog()
         self.new_dialog.setModal(True)
         self._iface = iface
-        self._model = Model(self._iface)
         self._init_connections()
         self._settings = project_settings
         self._browse_open_path = _default_directory(project_settings)
@@ -58,7 +57,7 @@ class Dialog:
                 #  take a default mbtile if non is selected.
                 dir_path = os.path.dirname(os.path.abspath(__file__))
                 file_path = "%s/data/zurich.mbtiles" % dir_path
-            self._model.mbtiles(file_path)
+            Model(self._iface, file_path)
 
     def _init_connections(self):
         self.new_dialog.acceptButton.clicked.connect(self.new_dialog.accept)
