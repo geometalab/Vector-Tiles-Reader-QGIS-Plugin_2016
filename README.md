@@ -1,32 +1,30 @@
 # Vector Tiles Reader QGIS-Plugin
 
-**feature**
+This plugin imports vector tiles into QGIS. 
 
-This plugin imports vector tiles into the QGIS environment. 
+Related web links:
+* Homepage:    http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
+* Issues (tracker): https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
+* Code repository:  https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin (this webpage)
 
-**related links**
-
-* homepage:   http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
-* tracker:    https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
-* repository: https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin
-
-**API design**
-
-![](data/API.png?raw=true)
-
-**license**
+**License**
 
 The Vector Tile Reader plugin is released under the GNU license (see LICENSE)
 
-**contributors**
+**Contributors**
 
 Vector Tile Reader has been developed by
 
 * Dijan Helbling (Version 1)
 
-**acknowledgment**
+**Acknowledgments**
 
 * Stefan Keller
 * Carmelo Schumacher
 * Nicola Jordan
 * Raphael Das Gupta
+
+## Technical documentation
+
+API design:
+![](data/API.png?raw=true)
