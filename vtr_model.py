@@ -26,6 +26,7 @@ import gzip
 import os
 import uuid
 import Canvas
+import StringIO
 
 extent = 4096
 geo = []  # 0: zoom, 1: easting, 2: northing
@@ -54,7 +55,6 @@ class Model:
         self.temporary_layer = []
         self.database_source = database_source
         # self._init_connections()
-        self.mbtiles()
 
     # def _init_connections(self):
     #     vector_layer = QgsVectorLayer()
@@ -68,7 +68,8 @@ class Model:
     #     with open(self._tmp2, 'w') as f:
     #         f.write(scale)
     #         f.write(coordinates)
-    #     self.mbtiles(scale=scale, coordinates=coordinates)
+    #     print "refresh"
+    #     # self.mbtiles(scale=scale, coordinates=coordinates)
 
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data

@@ -46,7 +46,8 @@ class Dialog:
                 #  take a default mbtile if non is selected.
                 dir_path = os.path.dirname(os.path.abspath(__file__))
                 file_path = "%s/data/zurich.mbtiles" % dir_path
-            Model(self._iface, file_path)
+            model = Model(self._iface, file_path)
+            model.mbtiles()
 
     def _init_connections(self):
         self.new_dialog.acceptButton.clicked.connect(self.new_dialog.accept)
