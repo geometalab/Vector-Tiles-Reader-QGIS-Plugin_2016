@@ -8,3 +8,4 @@
 *.dll
 *.pyo
 out.txt
+.idea

@@ -9,6 +9,7 @@
 [general]
 name=VectorTilesReader
 qgisMinimumVersion=2.12
+qgisMaximumVersion=2.14
 description=Vector Tile Reader
 about=This plugin allows you to import vector tiles to qgis.
 version=0.0.5

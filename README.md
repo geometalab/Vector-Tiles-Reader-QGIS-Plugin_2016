@@ -12,7 +12,7 @@ This plugin imports vector tiles into the QGIS environment.
 
 **API design**
 
-![](data/API.png?raw=true)
+![](data/doc/API.png?raw=true)
 
 **license**
 
