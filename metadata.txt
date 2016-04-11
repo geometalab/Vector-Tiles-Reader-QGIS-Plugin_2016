@@ -1,17 +1,13 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
+# This file contains metadata for this plugin interpreted by QGIS and e.g. plugins.qgis.org.
 
-# This file should be included when you package your plugin.# Mandatory items:
+# Mandatory items:
 
 [general]
-name=VectorTilesReader
+name=Vector Tiles Reader
 qgisMinimumVersion=2.12
 qgisMaximumVersion=2.14
-description=Vector Tile Reader
-about=This plugin allows you to import vector tiles to qgis.
+description=Read Mapbox vector tiles from MBTiles file
+about=This Python plugin reads Mapbox vector tiles (MVT) from a local MBTiles file. A possible source of MBTiles is OSM2VectorTiles.org.
 version=0.0.5
 author=Dijan Helbling
 email=geometalab@gmail.com
@@ -21,15 +17,15 @@ email=geometalab@gmail.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=First experimental release.
 
 # Tags are comma separated with spaces allowed
-tags=vector tile, mbtiles
+tags=vector tile, mbtiles, vector
 
 homepage=http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
 tracker=https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
 repository=https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin
-category=Plugins
+category=Vector
 icon=icon.png
 experimental=True
 

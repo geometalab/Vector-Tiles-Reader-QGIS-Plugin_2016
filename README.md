@@ -1,32 +1,41 @@
 # Vector Tiles Reader QGIS-Plugin
 
-**feature**
+This Python plugin reads Mapbox Vector Tiles (MVT) from a local MBTiles file and loads them into a vector layer that is rendered by QGIS and it's (default) styling.
 
-This plugin imports vector tiles into the QGIS environment. 
+_>> This is Work in Progress! Expected release as experimental QGIS plugin April/May 2016 <<_
 
-**related links**
+For more information about the Vector Tiles concept and limitations of the plugin see homepage.
 
-* homepage:   http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
-* tracker:    https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
-* repository: https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin
+Important web links:
+* __Homepage__       : http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
+* Issues tracker : https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
+* Code repository: https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin (this webpage)
 
-**API design**
-
-![](data/doc/API.png?raw=true)
-
-**license**
+## License
 
 The Vector Tile Reader plugin is released under the GNU license (see LICENSE)
 
-**contributors**
+## Contributors
 
 Vector Tile Reader has been developed by
 
-* Dijan Helbling (Version 1)
+* Dijan Helbling (first implementation, initial releases)
 
-**acknowledgment**
+Acknowledgments:
 
 * Stefan Keller
 * Carmelo Schumacher
 * Nicola Jordan
 * Raphael Das Gupta
+
+## Technical documentation
+
+Name conventions for Vector Tiles Reader QGIS Plugin:
+
+* Official full name : "Vector Tiles Reader" or "Vector Tiles Reader QGIS Plugin"
+* Camel Case no space: VectorTilesReader
+* Lower Case no space: vector_tiles_reader
+* Abbreviated name   : vtr
+
+API design:
+![](data/API.png?raw=true)
