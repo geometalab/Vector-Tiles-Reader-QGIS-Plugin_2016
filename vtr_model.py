@@ -11,18 +11,7 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
 """
-
-# @author Dijan Helbling
 
 from contrib.mapbox_vector_tile import Mapzen
 from contrib.globalmaptiles import *
@@ -37,6 +26,7 @@ import gzip
 import os
 import uuid
 import Canvas
+import StringIO
 
 extent = 4096
 geo = []  # 0: zoom, 1: easting, 2: northing
@@ -65,7 +55,6 @@ class Model:
         self.temporary_layer = []
         self.database_source = database_source
         # self._init_connections()
-        self.mbtiles()
 
     # def _init_connections(self):
     #     vector_layer = QgsVectorLayer()
@@ -79,7 +68,8 @@ class Model:
     #     with open(self._tmp2, 'w') as f:
     #         f.write(scale)
     #         f.write(coordinates)
-    #     self.mbtiles(scale=scale, coordinates=coordinates)
+    #     print "refresh"
+    #     # self.mbtiles(scale=scale, coordinates=coordinates)
 
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
