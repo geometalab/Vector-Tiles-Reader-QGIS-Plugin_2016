@@ -38,4 +38,4 @@ Name conventions for Vector Tiles Reader QGIS Plugin:
 * Abbreviated name   : vtr
 
 API design:
-![](data/API.png?raw=true)
+![](data/doc/API.png?raw=true)

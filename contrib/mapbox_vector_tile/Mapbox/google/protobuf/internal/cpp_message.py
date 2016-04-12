@@ -36,9 +36,9 @@ __author__ = 'petar@google.com (Petar Petrov)'
 
 import copy_reg
 import operator
-from google.protobuf.internal import _net_proto2___python
-from google.protobuf.internal import enum_type_wrapper
-from google.protobuf import message
+import _net_proto2___python
+import enum_type_wrapper
+from .. import message
 
 
 _LABEL_REPEATED = _net_proto2___python.LABEL_REPEATED
