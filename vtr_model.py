@@ -36,22 +36,14 @@ class Model:
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
     _mapzen = None
     _geo = []
-    geojson_data = {
-        "type": "FeatureCollection",
-        "crs": {
-            "type": "EPSG",
-            "properties": {
-                "code": 3785
-            }
-        },
-        "features": []
-    }
+    geojson_data = {"type": "FeatureCollection", "crs": {"type": "EPSG", "properties": {"code": 3785}}, "features": []}
 
     def __init__(self, iface, database_source):
         self._mapzen = Mapzen()
         self._iface = iface
-        self.temporary_layer = []
         self.database_source = database_source
+        self._canvas = iface.mapCanvas()
+        self._layer = None
 
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
@@ -67,8 +59,8 @@ class Model:
             with gzip.open(self._tmp, 'rb') as f:
                 file_content = f.read()
 
-            decoded_data = self.decode_file(file_content)
-            self.write_features(decoded_data, self._geo)
+            decoded_data = self._decode_file(file_content)
+            self._write_features(decoded_data, self._geo)
             os.remove(self._tmp)
 
         json_src = self.unique_file_name
@@ -76,21 +68,21 @@ class Model:
         with open(json_src, "w") as f:
             json.dump(self.geojson_data, f)
 
-        self.load_layer(json_src)
+        self._load_layer(json_src)
 
-    def decode_file(self, data):
+    def _decode_file(self, data):
         # read the binary data file (pbf) using the library from Mapzen
         return self._mapzen.decode(data)
 
-    def write_features(self, decoded_data, geometry):
+    def _write_features(self, decoded_data, geometry):
         for name in decoded_data:
             for index, value in enumerate(decoded_data[name]['features']):
                 self.geojson_data["features"].append(
-                    self.build_object(decoded_data[name]["features"][index], geometry)
+                    self._build_object(decoded_data[name]["features"][index], geometry)
                 )
         return self.geojson_data
 
-    def load_layer(self, json_src):
+    def _load_layer(self, json_src):
         # load the created geojson into qgis
         self._iface.addVectorLayer(json_src, "a name", "ogr")
 
@@ -103,40 +95,59 @@ class Model:
     @property
     def database_command(self):
         # create a suitable sql query (TODO)
-        return "SELECT * FROM tiles WHERE zoom_level = 12 LIMIT 5;"
+        zoom = self.current_zoom
+        return "SELECT * FROM tiles WHERE zoom_level = %s LIMIT 5;" % zoom
 
     @property
     def unique_file_name(self):
         unique_name = uuid.uuid4()
         return "%s/data/tmp/%s.geojson" % (self.directory, unique_name)
 
-    def build_object(self, data, geometry):
+    @property
+    def current_zoom(self):
+        # get the current zoom level in qgis as a string
+        zoom = 12
+        return zoom
+
+    @property
+    def current_coordinates(self):
+        # get the current coordinates in qgis
+        coordinates = [45, 8]
+        return coordinates
+
+    @property
+    def calculate_tile_range(self):
+        # return [min_x, min_y, max_x, max_y] of the viewable qgis display
+        tmp = []
+        return tmp
+
+    def _build_object(self, data, geometry):
         #  single feature structure
         feature = {
             "type": "Feature",
             "geometry": {
-                "type": self.geometry_type(data),
-                "coordinates": self.mercator_geometry(data["geometry"], data["type"], geometry)
+                "type": self._geometry_type(data),
+                "coordinates": self._mercator_geometry(data["geometry"], data["type"], geometry)
             },
             "properties": data["properties"]
         }
         return feature
 
-    def mercator_geometry(self, coordinates, geo_type, geometry):
+    def _mercator_geometry(self, coordinates, geo_type, geometry):
         # recursively iterate through all the points and create an array,
         # if it is just a point remove the outer barckets.
         tmp = []
         for index, value in enumerate(coordinates):
             if isinstance(coordinates[index][0], int):
-                tmp.append(self.calculate_geometry(coordinates[index], geometry))
+                tmp.append(self._calculate_geometry(coordinates[index], geometry))
             else:
-                tmp.append(self.mercator_geometry(coordinates[index], 0, geometry))
+                tmp.append(self._mercator_geometry(coordinates[index], 0, geometry))
         if geo_type == 1:
             return tmp[0]
         return tmp
 
     @staticmethod
-    def geometry_type(data):
+    def _geometry_type(data):
         # get the feature type
         options = {
             1: "Point",
@@ -149,7 +160,7 @@ class Model:
         return options[data["type"]]
 
     @staticmethod
-    def calculate_geometry(coordinates, geometry):
+    def _calculate_geometry(coordinates, geometry):
         # calculate the mercator geometry using external library
         # geometry:: 0: zoom, 1: easting, 2: northing
         tmp = GlobalMercator().TileBounds(geometry[1], geometry[2], geometry[0])
