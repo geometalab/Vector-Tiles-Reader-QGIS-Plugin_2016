@@ -48,9 +48,9 @@ this file*.
 __author__ = 'robinson@google.com (Will Robinson)'
 
 
-from google.protobuf.internal import api_implementation
-from google.protobuf import descriptor as descriptor_mod
-from google.protobuf import message
+from .internal import api_implementation
+import descriptor as descriptor_mod
+import message
 
 _FieldDescriptor = descriptor_mod.FieldDescriptor
 

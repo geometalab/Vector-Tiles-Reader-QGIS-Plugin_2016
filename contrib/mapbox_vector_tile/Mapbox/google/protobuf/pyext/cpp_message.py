@@ -36,8 +36,8 @@ Descriptor objects at runtime backed by the protocol buffer C++ API.
 
 __author__ = 'tibell@google.com (Johan Tibell)'
 
-from google.protobuf.pyext import _message
-from google.protobuf import message
+# from google.protobuf.pyext import _message
+from .. import message
 
 
 def NewMessage(bases, message_descriptor, dictionary):

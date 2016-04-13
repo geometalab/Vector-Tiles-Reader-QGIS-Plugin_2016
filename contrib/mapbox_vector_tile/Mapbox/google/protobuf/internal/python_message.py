@@ -68,16 +68,16 @@ import struct
 import weakref
 
 # We use "as" to avoid name collisions with variables.
-from google.protobuf.internal import containers
-from google.protobuf.internal import decoder
-from google.protobuf.internal import encoder
-from google.protobuf.internal import enum_type_wrapper
-from google.protobuf.internal import message_listener as message_listener_mod
-from google.protobuf.internal import type_checkers
-from google.protobuf.internal import wire_format
-from google.protobuf import descriptor as descriptor_mod
-from google.protobuf import message as message_mod
-from google.protobuf import text_format
+import containers
+import decoder
+import encoder
+import enum_type_wrapper
+import message_listener as message_listener_mod
+import type_checkers
+import wire_format
+from .. import descriptor as descriptor_mod
+from .. import message as message_mod
+from .. import text_format
 
 _FieldDescriptor = descriptor_mod.FieldDescriptor
 
