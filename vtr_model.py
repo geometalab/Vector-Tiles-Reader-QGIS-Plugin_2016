@@ -85,6 +85,7 @@ class Model:
         # load the created geojson into qgis
         layer = QgsVectorLayer(json_src, "a name", "ogr")
         QgsMapLayerRegistry.instance().addMapLayer(layer)
+        scale = self._canvas.scale()
 
     def _refresh(self):
         QgsMessageLog.logMessage("refresh")
@@ -99,7 +100,9 @@ class Model:
     def database_command(self):
         # create a suitable sql query (TODO)
         zoom = self.current_zoom
-        return "SELECT * FROM tiles WHERE zoom_level = %s LIMIT 5;" % zoom
+        coordinates = self.current_coordinates
+        tiles = self.calculate_tile_range(coordinates)
+        return "SELECT * FROM tiles WHERE zoom_level = %s limit 5;" % zoom
 
     @property
     def unique_file_name(self):
@@ -109,17 +112,25 @@ class Model:
     @property
     def current_zoom(self):
         # get the current zoom level in qgis as a string
-        zoom = 12
-        return zoom
+        scale = self._canvas.scale()
+        zoom_index = [591657528, 295828764, 147914382, 73957191, 36978595, 18489298, 9244649, 4622324,
+                      2311162, 1155581, 577791, 288895, 144448, 72224, 36112]
+        for index, value in enumerate(zoom_index):
+            if value < scale:
+                return index - 1
+        return 14  # if the zoom level extends 14, return a default value of 14
 
     @property
     def current_coordinates(self):
-        # get the current coordinates in qgis
-        coordinates = [45, 8]
-        return coordinates
+        # get the current mercator coordinates in qgis
+        rectangle = self._canvas.extent()
+        x_min = int(rectangle.xMinimum())
+        y_min = int(rectangle.yMinimum())
+        x_max = int(rectangle.xMaximum())
+        y_max = int(rectangle.yMaximum())
+        return [x_min, y_min, x_max, y_max]
 
-    @property
-    def calculate_tile_range(self):
+    def calculate_tile_range(self, coordinates):
         # return [min_x, min_y, max_x, max_y] of the viewable qgis display
         tmp = []
         return tmp
