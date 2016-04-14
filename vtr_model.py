@@ -19,6 +19,7 @@ from contrib.globalmaptiles import *
 from qgis.gui import *
 from qgis.core import *
 import qgis.utils
+from qgis import *
 
 import json
 import sqlite3
@@ -27,19 +28,17 @@ import os
 import uuid
 
 extent = 4096
-geo = []  # 0: zoom, 1: easting, 2: northing
 
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
     _tmp = "%s/data/tmp/tmp.txt" % directory
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
-    _mapzen = None
-    _geo = []
-    geojson_data = {"type": "FeatureCollection", "crs": {"type": "EPSG", "properties": {"code": 3785}}, "features": []}
+    _geo = []  # 0: zoom, 1: easting, 2: northing
+    _geo_type_options = {1: "Point", 2: "LineString", 3: "Polygon"}
+    _json_data = {"Point": {}, "LineString": {}, "Polygon": {}}
 
     def __init__(self, iface, database_source):
-        self._mapzen = Mapzen()
         self._iface = iface
         self.database_source = database_source
         self._canvas = iface.mapCanvas()
@@ -50,6 +49,7 @@ class Model:
         cursor = self.database_cursor
         command = self.database_command
         data = cursor.execute(command)
+        self._create_layer()
 
         for index, row in enumerate(data):
             self._geo = [row[0], row[1], row[2]]
@@ -59,32 +59,35 @@ class Model:
             with gzip.open(self._tmp, 'rb') as f:
                 file_content = f.read()
 
-            decoded_data = self._decode_file(file_content)
+            # decode the file using Mapzen's decode library
+            decoded_data = Mapzen().decode(file_content)
             self._write_features(decoded_data, self._geo)
             os.remove(self._tmp)
 
-        json_src = self.unique_file_name
+        for value in self._geo_type_options:
+            file_src = self.unique_file_name
+            with open(file_src, "w") as f:
+                json.dump(self._json_data[self._geo_type_options[value]], f)
+            self._load_layer(file_src)
 
-        with open(json_src, "w") as f:
-            json.dump(self.geojson_data, f)
-
-        self._load_layer(json_src)
-
-    def _decode_file(self, data):
-        # read the binary data file (pbf) using the library from Mapzen
-        return self._mapzen.decode(data)
+    def _create_layer(self):
+        for value in self._geo_type_options:
+            self._json_data[self._geo_type_options[value]] = {"type": "FeatureCollection", "crs":
+                {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::3857"}}, "features": []}
 
     def _write_features(self, decoded_data, geometry):
         for name in decoded_data:
             for index, value in enumerate(decoded_data[name]['features']):
-                self.geojson_data["features"].append(
-                    self._build_object(decoded_data[name]["features"][index], geometry)
-                )
-        return self.geojson_data
+                data, geo_type = self._build_object(decoded_data[name]["features"][index], geometry)
+                self._json_data[geo_type]["features"].append(data)
 
     def _load_layer(self, json_src):
         # load the created geojson into qgis
-        self._iface.addVectorLayer(json_src, "a name", "ogr")
+        layer = QgsVectorLayer(json_src, "a name", "ogr")
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+
+    def _refresh(self):
+        QgsMessageLog.logMessage("refresh")
 
     @property
     def database_cursor(self):
@@ -123,41 +126,30 @@ class Model:
 
     def _build_object(self, data, geometry):
         #  single feature structure
+        geo_type = self._geo_type_options[data["type"]]
         feature = {
             "type": "Feature",
             "geometry": {
-                "type": self._geometry_type(data),
+                "type": geo_type,
                 "coordinates": self._mercator_geometry(data["geometry"], data["type"], geometry)
             },
             "properties": data["properties"]
         }
-        return feature
+        return feature, geo_type
 
     def _mercator_geometry(self, coordinates, geo_type, geometry):
         # recursively iterate through all the points and create an array,
-        # if it is just a point remove the outer barckets.
         tmp = []
         for index, value in enumerate(coordinates):
             if isinstance(coordinates[index][0], int):
                 tmp.append(self._calculate_geometry(coordinates[index], geometry))
             else:
                 tmp.append(self._mercator_geometry(coordinates[index], 0, geometry))
-        if geo_type == 1:
+        if geo_type == 1:  # point remove the outer barcket.
             return tmp[0]
+        if geo_type == 3:  # polygon an additional bracket.
+            return [tmp]
         return tmp
-
-    @staticmethod
-    def _geometry_type(data):
-        # get the feature type
-        options = {
-            1: "Point",
-            2: "LineString",
-            3: "Polygon",
-            4: "MultiPoint",
-            5: "MultiLineString",
-            6: "MultiPolygon"
-        }
-        return options[data["type"]]
 
     @staticmethod
     def _calculate_geometry(coordinates, geometry):
