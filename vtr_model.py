@@ -47,22 +47,25 @@ class Model:
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
         cursor = self.database_cursor
-        command = self.database_command
-        data = cursor.execute(command)
+        command = self.database_command()
         self._create_layer()
 
-        for index, row in enumerate(data):
-            self._geo = [row[0], row[1], row[2]]
+        for sql_query in command:
+            data = cursor.execute(sql_query)
+            for index, row in enumerate(data):
+                if not row:
+                    break  # Maybe the tile did not exist in the database.
+                self._geo = [row[0], row[1], row[2]]
 
-            with open(self._tmp, 'wb') as f:
-                f.write(row[3])
-            with gzip.open(self._tmp, 'rb') as f:
-                file_content = f.read()
+                with open(self._tmp, 'wb') as f:
+                    f.write(row[3])
+                with gzip.open(self._tmp, 'rb') as f:
+                    file_content = f.read()
 
-            # decode the file using Mapzen's decode library
-            decoded_data = Mapzen().decode(file_content)
-            self._write_features(decoded_data, self._geo)
-            os.remove(self._tmp)
+                # decode the file using Mapzen's decode library
+                decoded_data = Mapzen().decode(file_content)
+                self._write_features(decoded_data, self._geo)
+                os.remove(self._tmp)
 
         for value in self._geo_type_options:
             file_src = self.unique_file_name
@@ -85,24 +88,35 @@ class Model:
         # load the created geojson into qgis
         layer = QgsVectorLayer(json_src, "a name", "ogr")
         QgsMapLayerRegistry.instance().addMapLayer(layer)
-        scale = self._canvas.scale()
 
     def _refresh(self):
         QgsMessageLog.logMessage("refresh")
+
+    def database_command(self):
+        # create a suitable sql query (TODO)
+        zoom = self.current_zoom
+        coordinates = self.current_coordinates
+        tiles = self.calculate_tile_range(coordinates, zoom)
+        commands = []
+        delta_x = tiles[2] - tiles[0]
+        delta_y = tiles[3] - tiles[1]
+        x_index, y_index = 0, 0
+        while x_index <= delta_x:
+            while y_index <= delta_y:
+                commands.append(
+                   "SELECT * FROM tiles WHERE zoom_level=%s and tile_column=%s and tile_row=%s;"
+                   % (zoom, tiles[0] + y_index, tiles[1] + x_index)
+                )
+                y_index += 1
+            x_index += 1
+            y_index = 0
+        return commands
 
     @property
     def database_cursor(self):
         # connect to the database and return its corresponding cursor
         con = sqlite3.connect(self.database_source)
         return con.cursor()
-
-    @property
-    def database_command(self):
-        # create a suitable sql query (TODO)
-        zoom = self.current_zoom
-        coordinates = self.current_coordinates
-        tiles = self.calculate_tile_range(coordinates)
-        return "SELECT * FROM tiles WHERE zoom_level = %s limit 5;" % zoom
 
     @property
     def unique_file_name(self):
@@ -130,10 +144,13 @@ class Model:
         y_max = int(rectangle.yMaximum())
         return [x_min, y_min, x_max, y_max]
 
-    def calculate_tile_range(self, coordinates):
-        # return [min_x, min_y, max_x, max_y] of the viewable qgis display
-        tmp = []
-        return tmp
+    @staticmethod
+    def calculate_tile_range(coordinates, zoom):
+        # return tiles of the displayed map canvas
+        # add the an additional tile around it.
+        tx_min, ty_min = GlobalMercator().MetersToTile(coordinates[0], coordinates[1], zoom)
+        tx_max, ty_max = GlobalMercator().MetersToTile(coordinates[2], coordinates[3], zoom)
+        return [tx_min - 1, ty_min - 1, tx_max + 1, ty_max + 1]
 
     def _build_object(self, data, geometry):
         #  single feature structure
