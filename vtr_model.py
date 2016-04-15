@@ -36,7 +36,9 @@ class Model:
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
     _geo = []  # 0: zoom, 1: easting, 2: northing
     _geo_type_options = {1: "Point", 2: "LineString", 3: "Polygon"}
+    # 4: "MultiPoint", 5: "MultiLineString", 6: "MultiPolygon"
     _json_data = {"Point": {}, "LineString": {}, "Polygon": {}}
+    # "MultiPoint": {}, "MultiLineString": {}, "MultiPolygon": {}
 
     def __init__(self, iface, database_source):
         self._iface = iface
@@ -155,28 +157,27 @@ class Model:
     def _build_object(self, data, geometry):
         #  single feature structure
         geo_type = self._geo_type_options[data["type"]]
+        coordinates = self._mercator_geometry(data["geometry"], geometry)
+        if data["type"] == 1:
+            coordinates = coordinates[0]
         feature = {
             "type": "Feature",
             "geometry": {
                 "type": geo_type,
-                "coordinates": self._mercator_geometry(data["geometry"], data["type"], geometry)
+                "coordinates": coordinates
             },
             "properties": data["properties"]
         }
         return feature, geo_type
 
-    def _mercator_geometry(self, coordinates, geo_type, geometry):
+    def _mercator_geometry(self, coordinates, geometry):
         # recursively iterate through all the points and create an array,
         tmp = []
         for index, value in enumerate(coordinates):
             if isinstance(coordinates[index][0], int):
                 tmp.append(self._calculate_geometry(coordinates[index], geometry))
             else:
-                tmp.append(self._mercator_geometry(coordinates[index], 0, geometry))
-        if geo_type == 1:  # point remove the outer barcket.
-            return tmp[0]
-        if geo_type == 3:  # polygon an additional bracket.
-            return [tmp]
+                tmp.append(self._mercator_geometry(coordinates[index], geometry))
         return tmp
 
     @staticmethod
