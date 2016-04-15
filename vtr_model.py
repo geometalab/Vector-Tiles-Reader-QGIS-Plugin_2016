@@ -36,15 +36,15 @@ class Model:
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
     _geo = []  # 0: zoom, 1: easting, 2: northing
     _geo_type_options = {1: "Point", 2: "LineString", 3: "Polygon"}
-    # 4: "MultiPoint", 5: "MultiLineString", 6: "MultiPolygon"
     _json_data = {"Point": {}, "LineString": {}, "Polygon": {}}
-    # "MultiPoint": {}, "MultiLineString": {}, "MultiPolygon": {}
 
     def __init__(self, iface, database_source):
         self._iface = iface
         self.database_source = database_source
         self._canvas = iface.mapCanvas()
         self._layer = None
+        self._counter = 0
+        self._bool = True
 
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
@@ -84,7 +84,8 @@ class Model:
         for name in decoded_data:
             for index, value in enumerate(decoded_data[name]['features']):
                 data, geo_type = self._build_object(decoded_data[name]["features"][index], geometry)
-                self._json_data[geo_type]["features"].append(data)
+                if data:
+                    self._json_data[geo_type]["features"].append(data)
 
     def _load_layer(self, json_src):
         # load the created geojson into qgis
@@ -157,9 +158,18 @@ class Model:
     def _build_object(self, data, geometry):
         #  single feature structure
         geo_type = self._geo_type_options[data["type"]]
-        coordinates = self._mercator_geometry(data["geometry"], geometry)
+        coordinates = self._mercator_geometry(data["geometry"], geometry, 0)
+        if data["type"] == 2 and self._counter > 0:
+            # if there it is a MultiLineString, the counter will be greater than zero. return None
+            self._counter = 0
+            self._bool = True
+            return None, geo_type
         if data["type"] == 1:
+            # Due to mercator_geometrys nature, the point will be displayed in a List "[[]]", remove the outer bracket.
             coordinates = coordinates[0]
+        if data["type"] == 3 and self._counter == 0:
+            # If there is not a polygon in a polygon, one bracket will be missing.
+            coordinates = [coordinates]
         feature = {
             "type": "Feature",
             "geometry": {
@@ -168,16 +178,22 @@ class Model:
             },
             "properties": data["properties"]
         }
+        self._counter = 0
+        self._bool = True
         return feature, geo_type
 
-    def _mercator_geometry(self, coordinates, geometry):
+    def _mercator_geometry(self, coordinates, geometry, counter):
         # recursively iterate through all the points and create an array,
         tmp = []
+
         for index, value in enumerate(coordinates):
             if isinstance(coordinates[index][0], int):
                 tmp.append(self._calculate_geometry(coordinates[index], geometry))
             else:
-                tmp.append(self._mercator_geometry(coordinates[index], geometry))
+                tmp.append(self._mercator_geometry(coordinates[index], geometry, counter + 1))
+        if self._bool:
+            self._counter = counter
+            self._bool = False
         return tmp
 
     @staticmethod
