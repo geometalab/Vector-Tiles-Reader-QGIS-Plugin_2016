@@ -16,10 +16,7 @@ of the License, or (at your option) any later version.
 from contrib.mapbox_vector_tile import Mapzen
 from contrib.globalmaptiles import *
 
-from qgis.gui import *
 from qgis.core import *
-import qgis.utils
-from qgis import *
 
 import json
 import sqlite3
@@ -43,14 +40,16 @@ class Model:
         self.database_source = database_source
         self._canvas = iface.mapCanvas()
         self._layer = None
+        self._mbtile_id = "name"
         self._counter = 0
         self._bool = True
 
-    def mbtiles(self, scale=None, coordinates=None):
+    def mbtiles(self):
         # connect to a mb_tile file and extract the data
+        self._set_metadata()
+        self._create_layer()
         cursor = self.database_cursor
         command = self.database_command()
-        self._create_layer()
 
         for sql_query in command:
             data = cursor.execute(sql_query)
@@ -89,11 +88,9 @@ class Model:
 
     def _load_layer(self, json_src):
         # load the created geojson into qgis
-        layer = QgsVectorLayer(json_src, "a name", "ogr")
+        name = self._mbtile_id
+        layer = QgsVectorLayer(json_src, name, "ogr")
         QgsMapLayerRegistry.instance().addMapLayer(layer)
-
-    def _refresh(self):
-        QgsMessageLog.logMessage("refresh")
 
     def database_command(self):
         # create a suitable sql query (TODO)
@@ -114,6 +111,11 @@ class Model:
             x_index += 1
             y_index = 0
         return commands
+
+    def _set_metadata(self):
+        cursor = self.database_cursor
+        cursor.execute("SELECT * FROM metadata WHERE name='id'")
+        self._mbtile_id = cursor.fetchone()[1]
 
     @property
     def database_cursor(self):
