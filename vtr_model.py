@@ -19,6 +19,7 @@ from contrib.globalmaptiles import *
 from qgis.gui import *
 from qgis.core import *
 import qgis.utils
+from qgis import *
 
 import json
 import sqlite3
@@ -27,19 +28,19 @@ import os
 import uuid
 
 extent = 4096
-geo = []  # 0: zoom, 1: easting, 2: northing
 
 
 class Model:
     directory = os.path.dirname(os.path.abspath(__file__))
     _tmp = "%s/data/tmp/tmp.txt" % directory
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
-    _mapzen = None
-    _geo = []
-    geojson_data = {"type": "FeatureCollection", "crs": {"type": "EPSG", "properties": {"code": 3785}}, "features": []}
+    _geo = []  # 0: zoom, 1: easting, 2: northing
+    _geo_type_options = {1: "Point", 2: "LineString", 3: "Polygon"}
+    # 4: "MultiPoint", 5: "MultiLineString", 6: "MultiPolygon"
+    _json_data = {"Point": {}, "LineString": {}, "Polygon": {}}
+    # "MultiPoint": {}, "MultiLineString": {}, "MultiPolygon": {}
 
     def __init__(self, iface, database_source):
-        self._mapzen = Mapzen()
         self._iface = iface
         self.database_source = database_source
         self._canvas = iface.mapCanvas()
@@ -48,55 +49,76 @@ class Model:
     def mbtiles(self, scale=None, coordinates=None):
         # connect to a mb_tile file and extract the data
         cursor = self.database_cursor
-        command = self.database_command
-        data = cursor.execute(command)
+        command = self.database_command()
+        self._create_layer()
 
-        for index, row in enumerate(data):
-            self._geo = [row[0], row[1], row[2]]
+        for sql_query in command:
+            data = cursor.execute(sql_query)
+            for index, row in enumerate(data):
+                if not row:
+                    break  # Maybe the tile did not exist in the database.
+                self._geo = [row[0], row[1], row[2]]
 
-            with open(self._tmp, 'wb') as f:
-                f.write(row[3])
-            with gzip.open(self._tmp, 'rb') as f:
-                file_content = f.read()
+                with open(self._tmp, 'wb') as f:
+                    f.write(row[3])
+                with gzip.open(self._tmp, 'rb') as f:
+                    file_content = f.read()
 
-            decoded_data = self._decode_file(file_content)
-            self._write_features(decoded_data, self._geo)
-            os.remove(self._tmp)
+                # decode the file using Mapzen's decode library
+                decoded_data = Mapzen().decode(file_content)
+                self._write_features(decoded_data, self._geo)
+                os.remove(self._tmp)
 
-        json_src = self.unique_file_name
+        for value in self._geo_type_options:
+            file_src = self.unique_file_name
+            with open(file_src, "w") as f:
+                json.dump(self._json_data[self._geo_type_options[value]], f)
+            self._load_layer(file_src)
 
-        with open(json_src, "w") as f:
-            json.dump(self.geojson_data, f)
-
-        self._load_layer(json_src)
-
-    def _decode_file(self, data):
-        # read the binary data file (pbf) using the library from Mapzen
-        return self._mapzen.decode(data)
+    def _create_layer(self):
+        for value in self._geo_type_options:
+            self._json_data[self._geo_type_options[value]] = {"type": "FeatureCollection", "crs":
+                {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::3857"}}, "features": []}
 
     def _write_features(self, decoded_data, geometry):
         for name in decoded_data:
             for index, value in enumerate(decoded_data[name]['features']):
-                self.geojson_data["features"].append(
-                    self._build_object(decoded_data[name]["features"][index], geometry)
-                )
-        return self.geojson_data
+                data, geo_type = self._build_object(decoded_data[name]["features"][index], geometry)
+                self._json_data[geo_type]["features"].append(data)
 
     def _load_layer(self, json_src):
         # load the created geojson into qgis
-        self._iface.addVectorLayer(json_src, "a name", "ogr")
+        layer = QgsVectorLayer(json_src, "a name", "ogr")
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+
+    def _refresh(self):
+        QgsMessageLog.logMessage("refresh")
+
+    def database_command(self):
+        # create a suitable sql query (TODO)
+        zoom = self.current_zoom
+        coordinates = self.current_coordinates
+        tiles = self.calculate_tile_range(coordinates, zoom)
+        commands = []
+        delta_x = tiles[2] - tiles[0]
+        delta_y = tiles[3] - tiles[1]
+        x_index, y_index = 0, 0
+        while x_index <= delta_x:
+            while y_index <= delta_y:
+                commands.append(
+                   "SELECT * FROM tiles WHERE zoom_level=%s and tile_column=%s and tile_row=%s;"
+                   % (zoom, tiles[0] + y_index, tiles[1] + x_index)
+                )
+                y_index += 1
+            x_index += 1
+            y_index = 0
+        return commands
 
     @property
     def database_cursor(self):
         # connect to the database and return its corresponding cursor
         con = sqlite3.connect(self.database_source)
         return con.cursor()
-
-    @property
-    def database_command(self):
-        # create a suitable sql query (TODO)
-        zoom = self.current_zoom
-        return "SELECT * FROM tiles WHERE zoom_level = %s LIMIT 5;" % zoom
 
     @property
     def unique_file_name(self):
@@ -106,58 +128,57 @@ class Model:
     @property
     def current_zoom(self):
         # get the current zoom level in qgis as a string
-        zoom = 12
-        return zoom
+        scale = self._canvas.scale()
+        zoom_index = [591657528, 295828764, 147914382, 73957191, 36978595, 18489298, 9244649, 4622324,
+                      2311162, 1155581, 577791, 288895, 144448, 72224, 36112]
+        for index, value in enumerate(zoom_index):
+            if value < scale:
+                return index - 1
+        return 14  # if the zoom level extends 14, return a default value of 14
 
     @property
     def current_coordinates(self):
-        # get the current coordinates in qgis
-        coordinates = [45, 8]
-        return coordinates
+        # get the current mercator coordinates in qgis
+        rectangle = self._canvas.extent()
+        x_min = int(rectangle.xMinimum())
+        y_min = int(rectangle.yMinimum())
+        x_max = int(rectangle.xMaximum())
+        y_max = int(rectangle.yMaximum())
+        return [x_min, y_min, x_max, y_max]
 
-    @property
-    def calculate_tile_range(self):
-        # return [min_x, min_y, max_x, max_y] of the viewable qgis display
-        tmp = []
-        return tmp
+    @staticmethod
+    def calculate_tile_range(coordinates, zoom):
+        # return tiles of the displayed map canvas
+        # add the an additional tile around it.
+        tx_min, ty_min = GlobalMercator().MetersToTile(coordinates[0], coordinates[1], zoom)
+        tx_max, ty_max = GlobalMercator().MetersToTile(coordinates[2], coordinates[3], zoom)
+        return [tx_min - 1, ty_min - 1, tx_max + 1, ty_max + 1]
 
     def _build_object(self, data, geometry):
         #  single feature structure
+        geo_type = self._geo_type_options[data["type"]]
+        coordinates = self._mercator_geometry(data["geometry"], geometry)
+        if data["type"] == 1:
+            coordinates = coordinates[0]
         feature = {
             "type": "Feature",
             "geometry": {
-                "type": self._geometry_type(data),
-                "coordinates": self._mercator_geometry(data["geometry"], data["type"], geometry)
+                "type": geo_type,
+                "coordinates": coordinates
             },
             "properties": data["properties"]
         }
-        return feature
+        return feature, geo_type
 
-    def _mercator_geometry(self, coordinates, geo_type, geometry):
+    def _mercator_geometry(self, coordinates, geometry):
         # recursively iterate through all the points and create an array,
-        # if it is just a point remove the outer barckets.
         tmp = []
         for index, value in enumerate(coordinates):
             if isinstance(coordinates[index][0], int):
                 tmp.append(self._calculate_geometry(coordinates[index], geometry))
             else:
-                tmp.append(self._mercator_geometry(coordinates[index], 0, geometry))
-        if geo_type == 1:
-            return tmp[0]
+                tmp.append(self._mercator_geometry(coordinates[index], geometry))
         return tmp
-
-    @staticmethod
-    def _geometry_type(data):
-        # get the feature type
-        options = {
-            1: "Point",
-            2: "LineString",
-            3: "Polygon",
-            4: "MultiPoint",
-            5: "MultiLineString",
-            6: "MultiPolygon"
-        }
-        return options[data["type"]]
 
     @staticmethod
     def _calculate_geometry(coordinates, geometry):
