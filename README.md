@@ -54,5 +54,5 @@ How this plugin was tested so far
 
 NOTE: Better future developing and testing would be with debugger and unit tests... 
 
-### API design
+### Design of API
 ![](data/doc/API.png?raw=true)
