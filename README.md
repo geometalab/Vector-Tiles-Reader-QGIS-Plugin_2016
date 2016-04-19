@@ -37,5 +37,22 @@ Name conventions for Vector Tiles Reader QGIS Plugin:
 * Lower Case no space: vector_tiles_reader
 * Abbreviated name   : vtr
 
-API design:
+### Development
+
+How this plugin was developed so far:
+
+* Linux Version??? 
+* PyCharm Version??? 
+* QGIS Version 2.14???
+
+How this plugin was tested so far
+
+# Update code in local Plugins directory
+# Start QGIS
+# In plugin, load "zuerich.mbtiles"
+# (goto 1)
+
+NOTE: Better future developing and testing would be with debugger and unit tests... 
+
+### API design
 ![](data/doc/API.png?raw=true)
