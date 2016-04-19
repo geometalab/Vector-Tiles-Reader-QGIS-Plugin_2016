@@ -47,10 +47,10 @@ How this plugin was developed so far:
 
 How this plugin was tested so far
 
-# Update code in local Plugins directory
-# Start QGIS
-# In plugin, load "zuerich.mbtiles"
-# (goto 1)
+1. Update code in local Plugins directory
+2. Start QGIS
+3. In plugin, load "zuerich.mbtiles"
+4. (goto 1)
 
 NOTE: Better future developing and testing would be with debugger and unit tests... 
 
