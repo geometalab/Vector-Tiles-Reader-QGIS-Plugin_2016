@@ -49,10 +49,10 @@ How this plugin was tested so far
 
 1. Update code in local Plugins directory
 2. Start QGIS
-3. In plugin, load "zuerich.mbtiles"
+3. In plugin, load "zuerich.mbtiles" (download from http://osm2vectortiles.org/downloads )
 4. (goto 1)
 
-NOTE: Better future developing and testing would be with debugger and unit tests... 
+NOTE: There is no logging an there are nor debug messages sent to the console nor unit tests yet... Better future developing and testing would be with debugger and unit tests. 
 
 ### Design of API
 ![](data/doc/API.png?raw=true)
