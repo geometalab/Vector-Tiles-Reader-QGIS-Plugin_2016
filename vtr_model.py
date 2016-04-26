@@ -136,6 +136,10 @@ class Model:
         cursor = self.database_cursor
         cursor.execute("SELECT * FROM metadata WHERE name='id'")
         self._mbtile_id = cursor.fetchone()[1]
+        # other usefull commands
+        # "SELECT * FROM metadata WHERE name='center'"
+        # "SELECT * FROM metadata WHERE name='maxzoom'"
+        # "SELECT * FROM metadata WHERE name='scheme'"
 
     @property
     def database_cursor(self):
