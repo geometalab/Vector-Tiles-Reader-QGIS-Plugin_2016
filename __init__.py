@@ -23,14 +23,14 @@ def description():
 
 
 def version():
-    return "Version 0.0.5"
+    return "Version 0.0.6"
 
 
 def qgisMinimumVersion():
     return "2.12"
 
 
-def qgisMinimumVersion():
+def qgisMaximumVersion():
     return "2.14"
 
 

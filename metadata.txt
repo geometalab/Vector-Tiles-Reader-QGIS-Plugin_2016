@@ -8,7 +8,7 @@ qgisMinimumVersion=2.12
 qgisMaximumVersion=2.14
 description=Read Mapbox vector tiles from MBTiles file
 about=This Python plugin reads Mapbox vector tiles (MVT) from a local MBTiles file. A possible source of MBTiles is OSM2VectorTiles.org. 
-version=0.0.5
+version=0.0.6
 author=Dijan Helbling
 email=geometalab@gmail.com
 

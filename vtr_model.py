@@ -28,6 +28,24 @@ extent = 4096
 
 
 class Model:
+    """
+     * The Model is initiated with a proper database(mbtile) file.
+     * The function mbtiles is called, it is the main function of the class. It handles following:
+     >> Initializing the database and extracting the metadata.
+     >> Iterating through all sql queries and taking necessary actions recarding their output.
+     >> For every iteration a file will be created and unziped. The file_content still binary will be
+        converted using the mapbox_vector_tile library (decode)
+     >> The extracted data will be given to (_write_feature)
+     * _write_features iterates through all the features in the current json, its purpose is to create
+       a geojson conform json.
+     >> For every feauter the function (build_object) is called.
+     * _build_object has a lot of fixes, which should be removed at some point.
+     >> It takes the coordinates from the data and passes it on to (_mercator_geometry) to get proper mercator data.
+     >> It handles the coordinates due to Multi Type issue.
+     >> It creates a feature object with type, geometry and metadata.
+     * we return to the (mbtiles) function. After the loop, we iterate through the avaiable geojson.
+     >> For each geojson we create a layer in qgis.
+    """
     directory = os.path.dirname(os.path.abspath(__file__))
     _tmp = "%s/data/tmp/tmp.txt" % directory
     _tmp2 = "%s/data/tmp/tmp2.txt" % directory
@@ -57,12 +75,11 @@ class Model:
                 if not row:
                     break  # Maybe the tile did not exist in the database.
                 self._geo = [row[0], row[1], row[2]]
-
+                # FIXME handle in memory
                 with open(self._tmp, 'wb') as f:
                     f.write(row[3])
                 with gzip.open(self._tmp, 'rb') as f:
                     file_content = f.read()
-
                 # decode the file using Mapzen's decode library
                 decoded_data = Mapzen().decode(file_content)
                 self._write_features(decoded_data, self._geo)
@@ -75,11 +92,13 @@ class Model:
             self._load_layer(file_src)
 
     def _create_layer(self):
+        # create a layer for each type
         for value in self._geo_type_options:
             self._json_data[self._geo_type_options[value]] = {"type": "FeatureCollection", "crs":
                 {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::3857"}}, "features": []}
 
     def _write_features(self, decoded_data, geometry):
+        # iterate through all the features of the data and build proper gejson conform objects.
         for name in decoded_data:
             for index, value in enumerate(decoded_data[name]['features']):
                 data, geo_type = self._build_object(decoded_data[name]["features"][index], geometry)
@@ -93,7 +112,7 @@ class Model:
         QgsMapLayerRegistry.instance().addMapLayer(layer)
 
     def database_command(self):
-        # create a suitable sql query (TODO)
+        # create a suitable sql query, using the canvas scale and the coordinates of the current extent.
         zoom = self.current_zoom
         coordinates = self.current_coordinates
         tiles = self.calculate_tile_range(coordinates, zoom)
@@ -113,9 +132,14 @@ class Model:
         return commands
 
     def _set_metadata(self):
+        # get the metadata from the database.
         cursor = self.database_cursor
         cursor.execute("SELECT * FROM metadata WHERE name='id'")
         self._mbtile_id = cursor.fetchone()[1]
+        # other usefull commands
+        # "SELECT * FROM metadata WHERE name='center'"
+        # "SELECT * FROM metadata WHERE name='maxzoom'"
+        # "SELECT * FROM metadata WHERE name='scheme'"
 
     @property
     def database_cursor(self):

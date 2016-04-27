@@ -41,16 +41,16 @@ Name conventions for Vector Tiles Reader QGIS Plugin:
 
 How this plugin was developed so far:
 
-* Linux Version??? 
-* PyCharm Version??? 
-* QGIS Version 2.14???
+* Linux Version: Debian GNU/Linux 8 
+* PyCharm Version 5.0.4
+* QGIS Version 2.12.3 Lyon 
+* Create symbolic link of working directory in .qgis2/python/plugins/
 
 How this plugin was tested so far
 
 1. Update code in local Plugins directory
-2. Start QGIS
-3. In plugin, load "zuerich.mbtiles" (download from http://osm2vectortiles.org/downloads )
-4. (goto 1)
+2. Start QGIS, or use the plugin reloader https://plugins.qgis.org/plugins/plugin_reloader/
+3. In plugin, load "zuerich.mbtiles" by toggling into the data folder, or just leaving the entry empty and press ok.
 
 NOTE: There is no logging an there are nor debug messages sent to the console nor unit tests yet... Better future developing and testing would be with debugger and unit tests. 
 
