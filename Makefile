@@ -43,9 +43,9 @@ PLUGINNAME = VectorTilesReader
 PY_FILES = \
 	__init__.py \
     vtr_plugin.py \
-    vtr_dialog.py \
-    vtr_model.py \
-    ui_vtr.py \
+   # vtr_dialog.py \
+   # vtr_model.py \
+   # ui_vtr.py \
 
 UI_FILES = ui_vtr.ui
 
