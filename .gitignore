@@ -9,3 +9,4 @@
 *.pyo
 out.txt
 .idea
+deprecated/
