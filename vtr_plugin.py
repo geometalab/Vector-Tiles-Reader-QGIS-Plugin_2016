@@ -17,6 +17,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 
+
 class VtrPlugin:
     _dialog = None
     _model = None
@@ -26,6 +27,17 @@ class VtrPlugin:
         # save reference to the QGIS interface
         self.iface = iface
         self.settings = QSettings("Vector Tile Reader","vectortilereader")
+        print "now importing all required stuff"
+        import sys
+        import os
+        import site
+        site.addsitedir(os.path.abspath(os.path.dirname(__file__) + '/ext-libs'))
+        print "import google.protobuf"
+        import google.protobuf
+        print "importing google.protobuf succeeded"
+        print "import mapbox_vector_tile"
+        import mapbox_vector_tile 
+        print "importing mapbox_vector_tile succeeded"
 
     def initGui(self):
         print "VTR Plugin initGui"
