@@ -37,6 +37,15 @@ Name conventions for Vector Tiles Reader QGIS Plugin:
 * Lower Case no space: vector_tiles_reader
 * Abbreviated name   : vtr
 
+## Installation
+
+Copy folder to:
+
+~/.qgis2/python/plugins
+
+~ means the home directory
+on Windows usually something like: 'C:\Users\{user}'
+
 ### Development
 
 tbd
