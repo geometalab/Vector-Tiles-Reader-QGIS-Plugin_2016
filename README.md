@@ -19,7 +19,7 @@ The Vector Tile Reader plugin is released under the GNU license (see LICENSE)
 
 Vector Tile Reader has been developed by
 
-* Martin Boos
+* Dijan Helbling
 
 Acknowledgments:
 
