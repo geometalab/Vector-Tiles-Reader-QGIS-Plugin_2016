@@ -1,4 +1,4 @@
-# Vector Tiles Reader QGIS-Plugin
+# Vector Tiles Reader QGIS-Plugin (abandoned repo; goto repo [Vector-Tiles-Reader-QGIS-Plugin](https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin))
 
 This Python plugin reads Mapbox Vector Tiles (MVT) from a local MBTiles file and loads them into a vector layer that is rendered by QGIS and it's (default) styling.
 
@@ -8,8 +8,8 @@ For more information about the Vector Tiles concept and limitations of the plugi
 
 Important web links:
 * __Homepage__       : http://giswiki.hsr.ch/Vector_Tiles_Reader_QGIS_Plugin
-* Issues tracker : https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin/issues
-* Code repository: https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin (this webpage)
+* Issues tracker : https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin_2016/issues
+* Code repository: https://github.com/geometalab/Vector-Tiles-Reader-QGIS-Plugin_2016 (this webpage)
 
 ## License
 
